@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  title         String
+  slug          String   @unique
+  description   String?
+  price         Int      // in cents
+  comparePrice  Int?
+  images        String   @default("[]")
+  category      String?
+  width         Float?
+  height        Float?
+  depth         Float?
+  dimensionUnit String   @default("inches")
+  weight        Float?
+  sku           String?
+  quantity      Int      @default(1)
+  status        String   @default("available")
+  featured      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status])
+  @@index([category])
+  @@index([featured])
+}
+
+model Order {
+  id              String   @id @default(cuid())
+  orderNumber     String   @unique
+  customerEmail   String
+  customerName    String
+  items           String   // JSON string
+  subtotal        Int
+  shippingCost    Int      @default(0)
+  tax             Int      @default(0)
+  total           Int
+  status          String   @default("pending")
+  shippingAddress String   // JSON string
+  stripeSessionId String?  @unique
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status])
+  @@index([customerEmail])
+}
+
+model Category {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String?
+  image       String?
+  sortOrder   Int     @default(0)
+
+  @@index([sortOrder])
+}
+
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+  type  String @default("string")
+  group String @default("general")
+
+  @@index([group])
+}
