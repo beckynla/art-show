@@ -215,6 +215,16 @@ export default function HomepageSettingsPage() {
               Content for your dedicated <span className="font-medium">/about</span> page.
             </p>
 
+            <div className="bg-gray-50 rounded-lg p-4 mb-4">
+              <ToggleSwitch
+                label="Show About Page"
+                description="When off, the About link is removed from the menu and footer, and the /about page is unavailable"
+                checked={settings.show_about !== 'false'}
+                onChange={(checked) => updateSetting('show_about', checked ? 'true' : 'false')}
+              />
+            </div>
+
+            {settings.show_about !== 'false' && (
             <div className="space-y-4">
               <SettingsImageInput
                 label="Photo"
@@ -235,6 +245,7 @@ export default function HomepageSettingsPage() {
                 rows={6}
               />
             </div>
+            )}
           </div>
         </div>
       )}

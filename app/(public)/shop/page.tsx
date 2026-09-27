@@ -7,10 +7,10 @@ import { ProductFilters } from '@/components/public/ProductFilters'
 import { Reveal } from '@/components/public/Reveal'
 
 interface ShopPageProps {
-  searchParams: Promise<{ category?: string; sort?: string }>
+  searchParams: Promise<{ category?: string }>
 }
 
-async function getProducts(category?: string, sort?: string) {
+async function getProducts(category?: string) {
   const where = {
     // Show every piece in the gallery except explicitly hidden ones.
     // Most pieces are "display" (not for sale); "available" pieces get a discreet indicator.
@@ -18,20 +18,7 @@ async function getProducts(category?: string, sort?: string) {
     ...(category ? { category } : {}),
   }
 
-  const orderBy = (() => {
-    switch (sort) {
-      case 'price-asc':
-        return { price: 'asc' as const }
-      case 'price-desc':
-        return { price: 'desc' as const }
-      case 'oldest':
-        return { createdAt: 'asc' as const }
-      default:
-        return { createdAt: 'desc' as const }
-    }
-  })()
-
-  return prisma.product.findMany({ where, orderBy })
+  return prisma.product.findMany({ where, orderBy: { createdAt: 'desc' } })
 }
 
 async function getCategories() {
@@ -43,7 +30,7 @@ async function getCategories() {
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const params = await searchParams
   const [products, categories, shopSettings] = await Promise.all([
-    getProducts(params.category, params.sort),
+    getProducts(params.category),
     getCategories(),
     getSettings('shop'),
   ])
@@ -103,7 +90,6 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         <ProductFilters
           categories={categories}
           currentCategory={params.category}
-          currentSort={params.sort}
         />
 
         {productsWithImages.length === 0 ? (

@@ -1,8 +1,13 @@
 import Image from 'next/image'
+import { notFound } from 'next/navigation'
 import { getSettings } from '@/lib/settings'
 
 export default async function AboutPage() {
   const homepage = await getSettings('homepage')
+
+  if (homepage.show_about === 'false') {
+    notFound()
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

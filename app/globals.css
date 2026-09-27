@@ -28,6 +28,8 @@
   --color-accent-900: #701a75;
   --color-accent-950: #4a044e;
 
+  --color-background: #ffffff;
+
   /* Fonts */
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-heading: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { getSettings } from '@/lib/settings'
 
-export async function Footer() {
+export async function Footer({ showAbout }: { showAbout: boolean }) {
   const contact = await getSettings('contact')
 
   const socialLinks = [
@@ -31,11 +31,13 @@ export async function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4">Information</h3>
             <ul className="space-y-2">
-              <li>
-                <Link href="/about" className="hover:text-white transition-colors">
-                  About
-                </Link>
-              </li>
+              {showAbout && (
+                <li>
+                  <Link href="/about" className="hover:text-white transition-colors">
+                    About
+                  </Link>
+                </li>
+              )}
               <li>
                 <Link href="/contact" className="hover:text-white transition-colors">
                   Contact

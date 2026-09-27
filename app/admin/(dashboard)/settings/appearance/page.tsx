@@ -65,8 +65,29 @@ export default function AppearanceSettingsPage() {
             </div>
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Background Color
+            </label>
+            <div className="flex gap-2 max-w-xs">
+              <input
+                type="color"
+                value={settings.background_color || '#ffffff'}
+                onChange={(e) => updateSetting('background_color', e.target.value)}
+                className="h-10 w-14 rounded border border-gray-300 cursor-pointer"
+              />
+              <Input
+                value={settings.background_color || '#ffffff'}
+                onChange={(e) => updateSetting('background_color', e.target.value)}
+                placeholder="#ffffff"
+                className="flex-1"
+              />
+            </div>
+          </div>
+
           <p className="text-sm text-gray-500">
-            These colors will be used throughout your shop for buttons, links, and accents.
+            Primary and accent colors are used for buttons, links, and accents. The background color
+            fills the page behind your artwork. Light backgrounds keep text easiest to read.
           </p>
 
           <h3 className="text-lg font-medium text-gray-900 border-b pb-2 pt-4">Fonts</h3>

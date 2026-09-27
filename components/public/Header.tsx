@@ -7,13 +7,14 @@ import Image from 'next/image'
 interface HeaderProps {
   shopName: string
   shopLogo: string | null
+  showAbout: boolean
 }
 
-export function Header({ shopName, shopLogo }: HeaderProps) {
+export function Header({ shopName, shopLogo, showAbout }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-50 bg-background border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -39,9 +40,11 @@ export function Header({ shopName, shopLogo }: HeaderProps) {
               <Link href="/shop" className="text-gray-600 hover:text-gray-900 font-medium">
                 Gallery
               </Link>
-              <Link href="/about" className="text-gray-600 hover:text-gray-900 font-medium">
-                About
-              </Link>
+              {showAbout && (
+                <Link href="/about" className="text-gray-600 hover:text-gray-900 font-medium">
+                  About
+                </Link>
+              )}
               <Link href="/contact" className="text-gray-600 hover:text-gray-900 font-medium">
                 Contact
               </Link>
@@ -77,13 +80,15 @@ export function Header({ shopName, shopLogo }: HeaderProps) {
               >
                 Gallery
               </Link>
-              <Link
-                href="/about"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-gray-600 hover:text-gray-900 font-medium"
-              >
-                About
-              </Link>
+              {showAbout && (
+                <Link
+                  href="/about"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-gray-600 hover:text-gray-900 font-medium"
+                >
+                  About
+                </Link>
+              )}
               <Link
                 href="/contact"
                 onClick={() => setIsMobileMenuOpen(false)}

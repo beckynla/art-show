@@ -11,20 +11,11 @@ interface Category {
 interface ProductFiltersProps {
   categories: Category[]
   currentCategory?: string
-  currentSort?: string
 }
-
-const sortOptions = [
-  { value: '', label: 'Newest' },
-  { value: 'oldest', label: 'Oldest' },
-  { value: 'price-asc', label: 'Price: Low to High' },
-  { value: 'price-desc', label: 'Price: High to Low' },
-]
 
 export function ProductFilters({
   categories,
   currentCategory,
-  currentSort,
 }: ProductFiltersProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -62,25 +53,6 @@ export function ProductFilters({
           </select>
         </div>
       )}
-
-      {/* Sort Filter */}
-      <div>
-        <label htmlFor="sort" className="sr-only">
-          Sort
-        </label>
-        <select
-          id="sort"
-          value={currentSort || ''}
-          onChange={(e) => updateFilter('sort', e.target.value)}
-          className="block w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
-        >
-          {sortOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
     </div>
   )
 }

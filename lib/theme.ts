@@ -53,21 +53,48 @@ function generateColorScale(baseColor: string): Record<string, string> {
     }
   }
 
-  const { h, s } = hsl
+  const { h, s, l } = hsl
+
+  // The chosen color is used exactly as shade 600 (buttons, links); other
+  // shades blend from it toward white (lighter) or near-black (darker), so
+  // the picked color's own lightness is preserved.
+  const lighter = (f: number) => `hsl(${h}, ${s}%, ${Math.round(l + (97 - l) * f)}%)`
+  const darker = (f: number) => `hsl(${h}, ${s}%, ${Math.round(l - (l - 5) * f)}%)`
 
   return {
-    50: `hsl(${h}, ${Math.min(s + 30, 100)}%, 97%)`,
-    100: `hsl(${h}, ${Math.min(s + 25, 100)}%, 94%)`,
-    200: `hsl(${h}, ${Math.min(s + 20, 100)}%, 86%)`,
-    300: `hsl(${h}, ${Math.min(s + 15, 100)}%, 74%)`,
-    400: `hsl(${h}, ${Math.min(s + 10, 100)}%, 60%)`,
-    500: `hsl(${h}, ${s}%, 50%)`,
-    600: `hsl(${h}, ${s}%, 42%)`,
-    700: `hsl(${h}, ${s}%, 35%)`,
-    800: `hsl(${h}, ${s}%, 28%)`,
-    900: `hsl(${h}, ${s}%, 22%)`,
-    950: `hsl(${h}, ${s}%, 14%)`,
+    50: lighter(0.95),
+    100: lighter(0.88),
+    200: lighter(0.75),
+    300: lighter(0.58),
+    400: lighter(0.38),
+    500: lighter(0.18),
+    600: baseColor,
+    700: darker(0.2),
+    800: darker(0.38),
+    900: darker(0.55),
+    950: darker(0.7),
   }
+}
+
+// Fonts offered in Appearance settings that are loaded from Google Fonts
+const GOOGLE_FONTS = ['Inter', 'Playfair Display', 'Lora', 'Montserrat', 'Open Sans', 'Roboto']
+
+export async function getGoogleFontsUrl(): Promise<string | null> {
+  const settings = await getAllSettings()
+  const fonts = Array.from(new Set([settings.body_font, settings.heading_font]))
+    .filter((font): font is string => !!font && GOOGLE_FONTS.includes(font))
+
+  if (fonts.length === 0) return null
+
+  const families = fonts
+    .map((font) => `family=${font.replace(/ /g, '+')}:wght@400;500;600;700`)
+    .join('&')
+  return `https://fonts.googleapis.com/css2?${families}&display=swap`
+}
+
+// Quote named families (e.g. 'Playfair Display'); generic keywords like system-ui must stay bare
+function cssFontName(font: string): string {
+  return font === 'system-ui' ? font : `'${font.replace(/'/g, '')}'`
 }
 
 export async function generateThemeCSS(): Promise<string> {
@@ -75,6 +102,9 @@ export async function generateThemeCSS(): Promise<string> {
 
   const primaryColor = settings.primary_color || '#0ea5e9'
   const accentColor = settings.accent_color || '#d946ef'
+  const backgroundColor = /^#[0-9a-f]{6}$/i.test(settings.background_color || '')
+    ? settings.background_color
+    : '#ffffff'
   const bodyFont = settings.body_font || 'system-ui'
   const headingFont = settings.heading_font || 'system-ui'
 
@@ -107,8 +137,10 @@ export async function generateThemeCSS(): Promise<string> {
       --color-accent-900: ${accentScale[900]};
       --color-accent-950: ${accentScale[950]};
 
-      --font-sans: ${bodyFont}, system-ui, sans-serif;
-      --font-heading: ${headingFont}, system-ui, sans-serif;
+      --color-background: ${backgroundColor};
+
+      --font-sans: ${cssFontName(bodyFont)}, system-ui, sans-serif;
+      --font-heading: ${cssFontName(headingFont)}, system-ui, sans-serif;
     }
   `
 }
