@@ -35,10 +35,12 @@ model Product {
   quantity      Int      @default(1)
   status        String   @default("available")
   featured      Boolean  @default(false)
+  sortOrder     Int      @default(0) // position in the admin's custom gallery arrangement
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   @@index([status])
+  @@index([sortOrder])
   @@index([category])
   @@index([featured])
 }

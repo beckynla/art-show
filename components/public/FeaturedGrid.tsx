@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ImageLightbox } from './ImageLightbox'
 import { Reveal } from './Reveal'
+import { MasonryGrid } from './MasonryGrid'
 
 interface FeaturedItem {
   id: string
@@ -19,13 +20,13 @@ interface FeaturedGridProps {
 
 export function FeaturedGrid({ items }: FeaturedGridProps) {
   return (
-    <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6">
+    <MasonryGrid itemGapClass="gap-6">
       {items.map((item, i) => (
-        <Reveal key={item.id} delay={(i % 4) * 80} className="break-inside-avoid mb-6">
+        <Reveal key={item.id} delay={(i % 4) * 80}>
           <FeaturedCard item={item} />
         </Reveal>
       ))}
-    </div>
+    </MasonryGrid>
   )
 }
 

@@ -1,24 +1,15 @@
 import Image from 'next/image'
 import { prisma } from '@/lib/db'
+import { getGalleryProducts } from '@/lib/gallery'
 import { getSettings } from '@/lib/settings'
 import { parseImages } from '@/lib/images'
 import { ProductCard } from '@/components/public/ProductCard'
 import { ProductFilters } from '@/components/public/ProductFilters'
 import { Reveal } from '@/components/public/Reveal'
+import { MasonryGrid } from '@/components/public/MasonryGrid'
 
 interface ShopPageProps {
   searchParams: Promise<{ category?: string }>
-}
-
-async function getProducts(category?: string) {
-  const where = {
-    // Show every piece in the gallery except explicitly hidden ones.
-    // Most pieces are "display" (not for sale); "available" pieces get a discreet indicator.
-    status: { not: 'hidden' },
-    ...(category ? { category } : {}),
-  }
-
-  return prisma.product.findMany({ where, orderBy: { createdAt: 'desc' } })
 }
 
 async function getCategories() {
@@ -30,7 +21,7 @@ async function getCategories() {
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const params = await searchParams
   const [products, categories, shopSettings] = await Promise.all([
-    getProducts(params.category),
+    getGalleryProducts(params.category),
     getCategories(),
     getSettings('shop'),
   ])
@@ -97,12 +88,14 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
             <p className="text-gray-500">{emptyMessage}</p>
           </div>
         ) : (
-          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 mt-8">
-            {productsWithImages.map((product, i) => (
-              <Reveal key={product.id} delay={(i % 4) * 80} className="break-inside-avoid mb-8">
-                <ProductCard product={product} />
-              </Reveal>
-            ))}
+          <div className="mt-8">
+            <MasonryGrid>
+              {productsWithImages.map((product, i) => (
+                <Reveal key={product.id} delay={(i % 4) * 80}>
+                  <ProductCard product={product} />
+                </Reveal>
+              ))}
+            </MasonryGrid>
           </div>
         )}
       </div>
