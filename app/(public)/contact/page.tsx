@@ -5,11 +5,22 @@ export default async function ContactPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold font-heading text-gray-900 mb-8">
-        Contact
+      <h1 className="text-3xl font-bold font-heading text-gray-900 mb-6">
+        {contact.contact_heading || 'Contact'}
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+      {contact.contact_intro && (
+        <div className="prose prose-lg text-gray-600 max-w-3xl mb-10">
+          {contact.contact_intro
+            .split('\n')
+            .filter((p) => p.trim())
+            .map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+        </div>
+      )}
+
+      <div className="max-w-xl">
         {/* Contact Info */}
         <div>
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -116,24 +127,6 @@ export default async function ContactPage() {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Contact Form Placeholder */}
-        <div className="bg-gray-50 rounded-lg p-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Send a Message
-          </h2>
-          <p className="text-gray-600">
-            For inquiries about artwork, commissions, or collaborations, please reach out via email at{' '}
-            {contact.contact_email ? (
-              <a href={`mailto:${contact.contact_email}`} className="text-primary-600 hover:text-primary-700">
-                {contact.contact_email}
-              </a>
-            ) : (
-              'the email listed'
-            )}
-            .
-          </p>
         </div>
       </div>
     </div>

@@ -12,7 +12,24 @@ export default function ContactSettingsPage() {
     >
       {({ settings, updateSetting }) => (
         <div className="space-y-6">
-          <h3 className="text-lg font-medium text-gray-900 border-b pb-2">Contact Information</h3>
+          <h3 className="text-lg font-medium text-gray-900 border-b pb-2">Contact Page Text</h3>
+
+          <Input
+            label="Page Heading"
+            value={settings.contact_heading || ''}
+            onChange={(e) => updateSetting('contact_heading', e.target.value)}
+            placeholder="Contact"
+          />
+          <Textarea
+            label="Intro Text"
+            value={settings.contact_intro || ''}
+            onChange={(e) => updateSetting('contact_intro', e.target.value)}
+            placeholder="A warm welcome — mention your location, that you welcome in-person conversations, and offer studio tours by appointment..."
+            rows={6}
+            helpText="Shown at the top of the contact page. Good place to note your location and invite studio visits."
+          />
+
+          <h3 className="text-lg font-medium text-gray-900 border-b pb-2 pt-4">Contact Information</h3>
 
           <Input
             label="Contact Email"
