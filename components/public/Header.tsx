@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -12,9 +12,27 @@ interface HeaderProps {
 
 export function Header({ shopName, shopLogo, showAbout }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Fully transparent at the top so it sits on the page background; once scrolled
+  // (or with the mobile menu open) a frosted tint fades in to keep links readable
+  const isFrosted = isScrolled || isMobileMenuOpen
 
   return (
-    <header className="sticky top-0 z-50 bg-background border-b border-gray-200">
+    <header
+      className={`sticky top-0 z-50 border-b transition-[background-color,border-color,backdrop-filter] duration-300 ${
+        isFrosted
+          ? 'bg-[color-mix(in_srgb,var(--color-background)_70%,transparent)] backdrop-blur-md border-black/5'
+          : 'bg-transparent border-transparent'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
