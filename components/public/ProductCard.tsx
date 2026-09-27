@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { getPrimaryImage } from '@/lib/images'
-import { formatCurrency } from '@/lib/stripe'
 import type { ProductImage } from '@/types'
 
 interface ProductCardProps {
@@ -9,20 +8,42 @@ interface ProductCardProps {
     id: string
     title: string
     slug: string
-    price: number
-    comparePrice: number | null
     images: ProductImage[]
     status: string
+    width?: number | null
+    height?: number | null
+    depth?: number | null
+    dimensionUnit?: string | null
   }
+}
+
+// Only pieces that are (or were) for sale get a discreet indicator.
+// Display-only pieces intentionally show nothing.
+const availabilityMeta: Record<string, { label: string; dotClass: string }> = {
+  available: { label: 'available', dotClass: 'bg-emerald-500' },
+  reserved: { label: 'reserved', dotClass: 'bg-amber-500' },
+  sold: { label: 'sold', dotClass: 'bg-gray-400' },
+}
+
+function formatSize(product: ProductCardProps['product']): string | null {
+  const parts = [product.width, product.height, product.depth].filter(
+    (v): v is number => typeof v === 'number' && v > 0
+  )
+  if (parts.length === 0) return null
+  return `${parts.join(' × ')} ${product.dimensionUnit || 'inches'}`
 }
 
 export function ProductCard({ product }: ProductCardProps) {
   const primaryImage = getPrimaryImage(product.images)
-  const isSold = product.status === 'sold'
+  const size = formatSize(product)
+  const meta = availabilityMeta[product.status]
 
   return (
-    <Link href={`/product/${product.slug}`} className="group">
-      <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 mb-4">
+    <Link
+      href={`/product/${product.slug}`}
+      className="group block transition-transform duration-300 ease-out hover:-translate-y-2"
+    >
+      <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 mb-4 shadow-sm transition-shadow duration-300 group-hover:shadow-2xl">
         <Image
           src={primaryImage}
           alt={product.title}
@@ -30,27 +51,24 @@ export function ProductCard({ product }: ProductCardProps) {
           className="object-cover group-hover:scale-105 transition-transform duration-300"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
-        {isSold && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-            <span className="bg-white text-gray-900 px-4 py-2 rounded-full font-medium">
-              Sold
-            </span>
-          </div>
-        )}
       </div>
-      <h3 className="font-medium text-gray-900 group-hover:text-primary-600 transition-colors">
-        {product.title}
-      </h3>
-      <div className="mt-1 flex items-center gap-2">
-        <span className={`font-medium ${isSold ? 'text-gray-500' : 'text-gray-900'}`}>
-          {formatCurrency(product.price)}
-        </span>
-        {product.comparePrice && product.comparePrice > product.price && (
-          <span className="text-gray-500 line-through text-sm">
-            {formatCurrency(product.comparePrice)}
+
+      {/* Size only — no title */}
+      {size && (
+        <p className="text-sm text-gray-700 group-hover:text-primary-600 transition-colors">
+          {size}
+        </p>
+      )}
+
+      {/* Discreet availability indicator */}
+      {meta && (
+        <div className="mt-1 flex items-center gap-1.5">
+          <span className={`inline-block w-1.5 h-1.5 rounded-full ${meta.dotClass}`} />
+          <span className="text-[11px] uppercase tracking-wider text-gray-400">
+            {meta.label}
           </span>
-        )}
-      </div>
+        </div>
+      )}
     </Link>
   )
 }

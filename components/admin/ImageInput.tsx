@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui'
+import { GooglePhotosPicker } from './GooglePhotosPicker'
 import type { ProductImage } from '@/types'
 
 interface ImageInputProps {
@@ -16,6 +17,7 @@ export function ImageInput({ images, onChange, maxImages = 10 }: ImageInputProps
   const [urlInput, setUrlInput] = useState('')
   const [error, setError] = useState('')
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
+  const [showGooglePicker, setShowGooglePicker] = useState(false)
 
   const handleFileUpload = useCallback(
     async (files: FileList | null) => {
@@ -217,18 +219,32 @@ export function ImageInput({ images, onChange, maxImages = 10 }: ImageInputProps
         </div>
       )}
 
-      {/* URL Input */}
+      {/* URL Input and Google Photos */}
       {images.length < maxImages && (
-        <div className="flex gap-2">
-          <input
-            type="url"
-            value={urlInput}
-            onChange={(e) => setUrlInput(e.target.value)}
-            placeholder="Or paste an image URL (https://...)"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-          />
-          <Button type="button" variant="secondary" onClick={handleAddUrl}>
-            Add URL
+        <div className="space-y-3">
+          <div className="flex gap-2">
+            <input
+              type="url"
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+              placeholder="Or paste an image URL (https://...)"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            />
+            <Button type="button" variant="secondary" onClick={handleAddUrl}>
+              Add URL
+            </Button>
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowGooglePicker(true)}
+            className="w-full"
+          >
+            <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12.545 10.239v3.821h5.445c-.712 2.315-2.647 3.972-5.445 3.972a6.033 6.033 0 110-12.064c1.498 0 2.866.549 3.921 1.453l2.814-2.814A9.969 9.969 0 0012.545 2C7.021 2 2.543 6.477 2.543 12s4.478 10 10.002 10c8.396 0 10.249-7.85 9.426-11.748l-9.426-.013z"/>
+            </svg>
+            Select from Google Photos
           </Button>
         </div>
       )}
@@ -243,6 +259,19 @@ export function ImageInput({ images, onChange, maxImages = 10 }: ImageInputProps
         Drag images to reorder. The first image will be the primary image shown on the shop.
         {images.length > 0 && ` ${images.length}/${maxImages} images added.`}
       </p>
+
+      {/* Google Photos Picker */}
+      {showGooglePicker && (
+        <GooglePhotosPicker
+          onSelect={(url) => {
+            const newImage: ProductImage = { type: 'external', url }
+            const combined = [...images, newImage].slice(0, maxImages)
+            onChange(combined)
+            setShowGooglePicker(false)
+          }}
+          onClose={() => setShowGooglePicker(false)}
+        />
+      )}
     </div>
   )
 }

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 import { stringifyImages } from '@/lib/images'
+import { generateUniqueSlug } from '@/lib/products'
 
 export async function GET(
   request: Request,
@@ -74,39 +75,33 @@ export async function PUT(
       )
     }
 
-    // Check for duplicate slug (excluding current product)
-    if (slug !== existingProduct.slug) {
-      const slugExists = await prisma.product.findUnique({
-        where: { slug },
-      })
-
-      if (slugExists) {
-        return NextResponse.json(
-          { error: 'A product with this slug already exists' },
-          { status: 400 }
-        )
-      }
-    }
+    // All descriptor fields are optional. Keep the existing slug when unchanged;
+    // otherwise derive a unique one (excluding this product from the collision check).
+    const desiredSlug = slug || title || existingProduct.slug
+    const finalSlug =
+      desiredSlug === existingProduct.slug
+        ? existingProduct.slug
+        : await generateUniqueSlug(desiredSlug, id)
 
     const product = await prisma.product.update({
       where: { id },
       data: {
-        title,
-        slug,
-        description,
-        price,
-        comparePrice,
+        title: title || '',
+        slug: finalSlug,
+        description: description || null,
+        price: typeof price === 'number' ? price : 0,
+        comparePrice: typeof comparePrice === 'number' ? comparePrice : null,
         images: stringifyImages(images || []),
-        category,
+        category: category || null,
         width,
         height,
         depth,
-        dimensionUnit,
+        dimensionUnit: dimensionUnit || 'inches',
         weight,
-        sku,
-        quantity,
-        status,
-        featured,
+        sku: sku || null,
+        quantity: quantity ?? 1,
+        status: status || 'available',
+        featured: featured || false,
       },
     })
 

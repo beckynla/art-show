@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import Image from 'next/image'
 import { Button, Input, Textarea } from '@/components/ui'
+import { GooglePhotosPicker } from './GooglePhotosPicker'
 
 export interface FeaturedItem {
   id: string
@@ -21,6 +22,7 @@ interface FeaturedItemsEditorProps {
 export function FeaturedItemsEditor({ items, onChange, maxItems = 8 }: FeaturedItemsEditorProps) {
   const [isUploading, setIsUploading] = useState<string | null>(null)
   const [error, setError] = useState('')
+  const [googlePickerForItem, setGooglePickerForItem] = useState<string | null>(null)
 
   const generateId = () => Math.random().toString(36).substring(2, 9)
 
@@ -141,30 +143,42 @@ export function FeaturedItemsEditor({ items, onChange, maxItems = 8 }: FeaturedI
                   </button>
                 </div>
               ) : (
-                <div
-                  onDrop={(e) => handleDrop(item.id, e)}
-                  onDragOver={(e) => e.preventDefault()}
-                  className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center hover:border-primary-500 transition-colors"
-                >
-                  <input
-                    type="file"
-                    id={`upload-${item.id}`}
-                    accept="image/*"
-                    onChange={(e) => handleFileUpload(item.id, e.target.files)}
-                    className="hidden"
-                  />
-                  <label htmlFor={`upload-${item.id}`} className="cursor-pointer text-center p-2">
-                    {isUploading === item.id ? (
-                      <span className="text-xs text-gray-500">Uploading...</span>
-                    ) : (
-                      <>
-                        <svg className="w-6 h-6 text-gray-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                        </svg>
-                        <span className="text-xs text-gray-500 mt-1 block">Add Image</span>
-                      </>
-                    )}
-                  </label>
+                <div className="space-y-2">
+                  <div
+                    onDrop={(e) => handleDrop(item.id, e)}
+                    onDragOver={(e) => e.preventDefault()}
+                    className="w-32 h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center hover:border-primary-500 transition-colors"
+                  >
+                    <input
+                      type="file"
+                      id={`upload-${item.id}`}
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(item.id, e.target.files)}
+                      className="hidden"
+                    />
+                    <label htmlFor={`upload-${item.id}`} className="cursor-pointer text-center p-2">
+                      {isUploading === item.id ? (
+                        <span className="text-xs text-gray-500">Uploading...</span>
+                      ) : (
+                        <>
+                          <svg className="w-5 h-5 text-gray-400 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                          </svg>
+                          <span className="text-xs text-gray-500 block">Upload</span>
+                        </>
+                      )}
+                    </label>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setGooglePickerForItem(item.id)}
+                    className="w-32 text-xs text-gray-600 hover:text-primary-600 flex items-center justify-center gap-1"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12.545 10.239v3.821h5.445c-.712 2.315-2.647 3.972-5.445 3.972a6.033 6.033 0 110-12.064c1.498 0 2.866.549 3.921 1.453l2.814-2.814A9.969 9.969 0 0012.545 2C7.021 2 2.543 6.477 2.543 12s4.478 10 10.002 10c8.396 0 10.249-7.85 9.426-11.748l-9.426-.013z"/>
+                    </svg>
+                    Google Photos
+                  </button>
                 </div>
               )}
             </div>
@@ -243,6 +257,17 @@ export function FeaturedItemsEditor({ items, onChange, maxItems = 8 }: FeaturedI
       <p className="text-sm text-gray-500">
         {items.length}/{maxItems} items. Drag images to upload or click to select.
       </p>
+
+      {/* Google Photos Picker */}
+      {googlePickerForItem && (
+        <GooglePhotosPicker
+          onSelect={(url) => {
+            handleUpdateItem(googlePickerForItem, 'image', url)
+            setGooglePickerForItem(null)
+          }}
+          onClose={() => setGooglePickerForItem(null)}
+        />
+      )}
     </div>
   )
 }

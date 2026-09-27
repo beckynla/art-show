@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ImageLightbox } from './ImageLightbox'
+import { Reveal } from './Reveal'
 
 interface FeaturedItem {
   id: string
@@ -19,8 +20,10 @@ interface FeaturedGridProps {
 export function FeaturedGrid({ items }: FeaturedGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {items.map((item) => (
-        <FeaturedCard key={item.id} item={item} />
+      {items.map((item, i) => (
+        <Reveal key={item.id} delay={(i % 4) * 80}>
+          <FeaturedCard item={item} />
+        </Reveal>
       ))}
     </div>
   )

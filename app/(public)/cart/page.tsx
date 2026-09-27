@@ -64,7 +64,7 @@ export default function CartPage() {
             Browse our collection and add some artwork!
           </p>
           <Link href="/shop">
-            <Button>Continue Shopping</Button>
+            <Button>Continue Viewing</Button>
           </Link>
         </div>
       </div>
@@ -192,7 +192,7 @@ export default function CartPage() {
               href="/shop"
               className="block text-center mt-4 text-sm text-gray-600 hover:text-gray-900"
             >
-              Continue Shopping
+              Continue Viewing
             </Link>
           </div>
         </div>

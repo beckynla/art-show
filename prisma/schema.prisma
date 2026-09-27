@@ -64,6 +64,20 @@ model Order {
   @@index([customerEmail])
 }
 
+model Inquiry {
+  id           String   @id @default(cuid())
+  name         String
+  email        String
+  message      String
+  productId    String?
+  productTitle String?
+  status       String   @default("new") // new | read | archived
+  createdAt    DateTime @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+}
+
 model Category {
   id          String  @id @default(cuid())
   name        String

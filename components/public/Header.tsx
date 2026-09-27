@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { CartIcon } from './CartIcon'
 
 interface HeaderProps {
   shopName: string
@@ -33,22 +32,20 @@ export function Header({ shopName, shopLogo }: HeaderProps) {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="/shop" className="text-gray-600 hover:text-gray-900 font-medium">
-              Shop
-            </Link>
-            <Link href="/about" className="text-gray-600 hover:text-gray-900 font-medium">
-              About
-            </Link>
-            <Link href="/contact" className="text-gray-600 hover:text-gray-900 font-medium">
-              Contact
-            </Link>
-          </nav>
-
-          {/* Right Side */}
-          <div className="flex items-center gap-4">
-            <CartIcon />
+          {/* Right Side: navigation pushed to the far right + cart */}
+          <div className="flex items-center gap-6 md:gap-8">
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-8">
+              <Link href="/shop" className="text-gray-600 hover:text-gray-900 font-medium">
+                Gallery
+              </Link>
+              <Link href="/about" className="text-gray-600 hover:text-gray-900 font-medium">
+                About
+              </Link>
+              <Link href="/contact" className="text-gray-600 hover:text-gray-900 font-medium">
+                Contact
+              </Link>
+            </nav>
 
             {/* Mobile Menu Button */}
             <button
@@ -78,7 +75,7 @@ export function Header({ shopName, shopLogo }: HeaderProps) {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-gray-600 hover:text-gray-900 font-medium"
               >
-                Shop
+                Gallery
               </Link>
               <Link
                 href="/about"

@@ -15,8 +15,7 @@ interface FeaturedItem {
 function parseFeaturedItems(json: string): FeaturedItem[] {
   try {
     const parsed = JSON.parse(json)
-    if (Array.isArray(parsed)) return parsed
-    return []
+    return Array.isArray(parsed) ? parsed : []
   } catch {
     return []
   }
@@ -25,41 +24,49 @@ function parseFeaturedItems(json: string): FeaturedItem[] {
 export default async function HomePage() {
   const homepage = await getSettings('homepage')
 
+  // Curated showcase images (not necessarily products) — managed in admin.
+  const featuredItems = parseFeaturedItems(homepage.featured_items || '[]').filter((i) => i.image)
+
   // Check visibility settings (default to true if not set)
   const showHero = homepage.show_hero !== 'false'
+  const showGreeting = homepage.show_greeting !== 'false'
   const showFeatured = homepage.show_featured !== 'false'
-  const showAbout = homepage.show_about !== 'false'
 
-  // Parse featured items
-  const featuredItems = parseFeaturedItems(homepage.featured_items || '[]')
-
-  // Check if hero section has content
+  // A slimmed hero — primarily the optional hero image (title/subtitle still supported)
   const hasHeroContent = homepage.hero_title || homepage.hero_image || homepage.hero_subtitle
 
-  // Check if about section has content
-  const hasAboutContent = homepage.about_title || homepage.about_content || homepage.about_image
+  // Which portion of the hero photo to show (CSS object-position), set in admin
+  const heroPosition = homepage.hero_position || 'center'
 
-  // Check if any section is visible
-  const hasVisibleContent =
-    (showHero && hasHeroContent) ||
-    (showFeatured && featuredItems.length > 0) ||
-    (showAbout && hasAboutContent)
+  // How tall/wide a banner the hero occupies, set in admin
+  const heroHeightClass =
+    {
+      short: 'min-h-[320px]',
+      standard: 'min-h-[460px]',
+      tall: 'min-h-[640px]',
+      full: 'min-h-[85vh]',
+    }[homepage.hero_height || 'standard'] || 'min-h-[460px]'
+
+  // Homepage greeting content — distinct from the /about page
+  const hasGreetingContent =
+    homepage.greeting_title || homepage.greeting_content || homepage.greeting_image
 
   return (
     <div>
-      {/* Hero Section */}
+      {/* Hero Section — optional image at the very top */}
       {showHero && hasHeroContent && (
-        <section className="relative bg-gray-900 text-white">
+        <section className={`relative flex items-center bg-gray-900 text-white ${heroHeightClass}`}>
           {homepage.hero_image && (
             <Image
               src={homepage.hero_image}
               alt="Hero"
               fill
               className="object-cover"
+              style={{ objectPosition: heroPosition }}
               priority
             />
           )}
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
+          <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div className="max-w-2xl">
               {homepage.hero_title && (
                 <h1 className="text-4xl md:text-5xl font-bold font-heading mb-4">
@@ -67,31 +74,59 @@ export default async function HomePage() {
                 </h1>
               )}
               {homepage.hero_subtitle && (
-                <p className="text-lg md:text-xl text-gray-300 mb-8">
+                <p className="text-lg md:text-xl text-gray-300">
                   {homepage.hero_subtitle}
                 </p>
-              )}
-              {homepage.hero_button_text && (
-                <Link
-                  href={homepage.hero_button_link || '/shop'}
-                  className="inline-block bg-primary-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors"
-                >
-                  {homepage.hero_button_text}
-                </Link>
               )}
             </div>
           </div>
         </section>
       )}
 
-      {/* Featured Section */}
+      {/* Greeting Section — homepage welcome, distinct from the /about page */}
+      {showGreeting && hasGreetingContent && (
+        <section className="pt-16 md:pt-24 pb-8 md:pb-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              {homepage.greeting_image && (
+                <ImageLightbox src={homepage.greeting_image} alt={homepage.greeting_title || 'Welcome'}>
+                  <div className="relative aspect-square rounded-lg overflow-hidden cursor-zoom-in">
+                    <Image
+                      src={homepage.greeting_image}
+                      alt={homepage.greeting_title || 'Welcome'}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </ImageLightbox>
+              )}
+              <div className={homepage.greeting_image ? '' : 'md:col-span-2 text-center max-w-2xl mx-auto'}>
+                {homepage.greeting_title && (
+                  <h2 className="text-3xl md:text-4xl font-bold font-heading text-gray-900 mb-6">
+                    {homepage.greeting_title}
+                  </h2>
+                )}
+                {homepage.greeting_content && (
+                  <div className="prose prose-lg text-gray-600">
+                    {homepage.greeting_content.split('\n').map((paragraph, i) => (
+                      <p key={i}>{paragraph}</p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Featured images — a curated showcase beneath the hero/profile */}
       {showFeatured && featuredItems.length > 0 && (
-        <section className="py-16 md:py-24">
+        <section className="pt-8 md:pt-10 pb-16 md:pb-24 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {(homepage.featured_title || homepage.featured_description) && (
               <div className="text-center mb-12">
                 {homepage.featured_title && (
-                  <h2 className="text-3xl font-bold font-heading text-gray-900">
+                  <h2 className="text-3xl md:text-4xl font-bold font-heading text-gray-900">
                     {homepage.featured_title}
                   </h2>
                 )}
@@ -108,50 +143,8 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* About Section */}
-      {showAbout && hasAboutContent && (
-        <section className="py-16 md:py-24 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-              {homepage.about_image && (
-                <ImageLightbox src={homepage.about_image} alt="About">
-                  <div className="relative aspect-square rounded-lg overflow-hidden cursor-zoom-in">
-                    <Image
-                      src={homepage.about_image}
-                      alt="About"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                </ImageLightbox>
-              )}
-              <div className={homepage.about_image ? '' : 'md:col-span-2 text-center max-w-2xl mx-auto'}>
-                {homepage.about_title && (
-                  <h2 className="text-3xl font-bold font-heading text-gray-900 mb-6">
-                    {homepage.about_title}
-                  </h2>
-                )}
-                {homepage.about_content && (
-                  <div className="prose prose-lg text-gray-600">
-                    {homepage.about_content.split('\n').map((paragraph, i) => (
-                      <p key={i}>{paragraph}</p>
-                    ))}
-                  </div>
-                )}
-                <Link
-                  href="/about"
-                  className="inline-block mt-6 text-primary-600 font-medium hover:text-primary-700"
-                >
-                  Learn more &rarr;
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Empty State - show when no content is configured */}
-      {!hasVisibleContent && (
+      {/* Empty state — only when nothing at all is configured */}
+      {!hasHeroContent && !hasGreetingContent && !(showFeatured && featuredItems.length > 0) && (
         <section className="py-24 md:py-32">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-4xl font-bold font-heading text-gray-900 mb-4">
@@ -164,7 +157,7 @@ export default async function HomePage() {
               href="/shop"
               className="inline-block bg-primary-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors"
             >
-              Browse Shop
+              Browse Gallery
             </Link>
           </div>
         </section>

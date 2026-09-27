@@ -1,6 +1,6 @@
 'use client'
 
-import { Input, Textarea } from '@/components/ui'
+import { Input, Textarea, Select } from '@/components/ui'
 import { SettingsForm } from '@/components/admin/SettingsForm'
 import { SettingsImageInput } from '@/components/admin/SettingsImageInput'
 import { FeaturedItemsEditor, FeaturedItem } from '@/components/admin/FeaturedItemsEditor'
@@ -77,10 +77,10 @@ export default function HomepageSettingsPage() {
                 onChange={(checked) => updateSetting('show_featured', checked ? 'true' : 'false')}
               />
               <ToggleSwitch
-                label="Show About Section"
-                description="Your artist profile and bio"
-                checked={settings.show_about !== 'false'}
-                onChange={(checked) => updateSetting('show_about', checked ? 'true' : 'false')}
+                label="Show Greeting Section"
+                description="A welcome message on the homepage"
+                checked={settings.show_greeting !== 'false'}
+                onChange={(checked) => updateSetting('show_greeting', checked ? 'true' : 'false')}
               />
             </div>
           </div>
@@ -96,6 +96,37 @@ export default function HomepageSettingsPage() {
                   value={settings.hero_image || ''}
                   onChange={(url) => updateSetting('hero_image', url)}
                 />
+                <div className="grid grid-cols-2 gap-4">
+                  <Select
+                    label="Hero Height"
+                    value={settings.hero_height || 'standard'}
+                    onChange={(e) => updateSetting('hero_height', e.target.value)}
+                    helpText="How tall the banner is"
+                    options={[
+                      { value: 'short', label: 'Short' },
+                      { value: 'standard', label: 'Standard' },
+                      { value: 'tall', label: 'Tall' },
+                      { value: 'full', label: 'Full (very tall)' },
+                    ]}
+                  />
+                  <Select
+                    label="Image Position"
+                    value={settings.hero_position || 'center'}
+                    onChange={(e) => updateSetting('hero_position', e.target.value)}
+                    helpText="Which part of the photo to show"
+                    options={[
+                      { value: 'center', label: 'Center' },
+                      { value: 'top', label: 'Top' },
+                      { value: 'bottom', label: 'Bottom' },
+                      { value: 'left', label: 'Left' },
+                      { value: 'right', label: 'Right' },
+                      { value: 'left top', label: 'Top Left' },
+                      { value: 'right top', label: 'Top Right' },
+                      { value: 'left bottom', label: 'Bottom Left' },
+                      { value: 'right bottom', label: 'Bottom Right' },
+                    ]}
+                  />
+                </div>
                 <Input
                   label="Hero Title"
                   value={settings.hero_title || ''}
@@ -109,20 +140,6 @@ export default function HomepageSettingsPage() {
                   placeholder="Discover unique artwork..."
                   rows={2}
                 />
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    label="Button Text"
-                    value={settings.hero_button_text || ''}
-                    onChange={(e) => updateSetting('hero_button_text', e.target.value)}
-                    placeholder="Shop Now"
-                  />
-                  <Input
-                    label="Button Link"
-                    value={settings.hero_button_link || ''}
-                    onChange={(e) => updateSetting('hero_button_link', e.target.value)}
-                    placeholder="/shop"
-                  />
-                </div>
               </div>
             </div>
           )}
@@ -160,32 +177,65 @@ export default function HomepageSettingsPage() {
           )}
 
           {/* About Section */}
-          {settings.show_about !== 'false' && (
+          {/* Greeting Section — homepage welcome */}
+          {settings.show_greeting !== 'false' && (
             <div>
-              <h3 className="text-lg font-medium text-gray-900 border-b pb-2 mb-4">About Section</h3>
+              <h3 className="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Greeting Section</h3>
+              <p className="text-sm text-gray-500 mb-4">
+                A short welcome shown on the homepage. This is separate from your About page.
+              </p>
 
               <div className="space-y-4">
                 <SettingsImageInput
-                  label="Profile Photo"
-                  value={settings.about_image || ''}
-                  onChange={(url) => updateSetting('about_image', url)}
+                  label="Greeting Photo"
+                  value={settings.greeting_image || ''}
+                  onChange={(url) => updateSetting('greeting_image', url)}
                 />
                 <Input
-                  label="Section Title"
-                  value={settings.about_title || ''}
-                  onChange={(e) => updateSetting('about_title', e.target.value)}
-                  placeholder="About the Artist"
+                  label="Greeting Title"
+                  value={settings.greeting_title || ''}
+                  onChange={(e) => updateSetting('greeting_title', e.target.value)}
+                  placeholder="Welcome"
                 />
                 <Textarea
-                  label="About Content"
-                  value={settings.about_content || ''}
-                  onChange={(e) => updateSetting('about_content', e.target.value)}
-                  placeholder="Tell visitors about yourself, your artistic journey, and your inspiration..."
-                  rows={6}
+                  label="Greeting Message"
+                  value={settings.greeting_content || ''}
+                  onChange={(e) => updateSetting('greeting_content', e.target.value)}
+                  placeholder="A warm welcome to visitors — who you are and what they'll find here..."
+                  rows={5}
                 />
               </div>
             </div>
           )}
+
+          {/* About Page — content for the /about page (not the homepage) */}
+          <div>
+            <h3 className="text-lg font-medium text-gray-900 border-b pb-2 mb-4">About Page</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Content for your dedicated <span className="font-medium">/about</span> page.
+            </p>
+
+            <div className="space-y-4">
+              <SettingsImageInput
+                label="Photo"
+                value={settings.about_image || ''}
+                onChange={(url) => updateSetting('about_image', url)}
+              />
+              <Input
+                label="Page Title"
+                value={settings.about_title || ''}
+                onChange={(e) => updateSetting('about_title', e.target.value)}
+                placeholder="About the Artist"
+              />
+              <Textarea
+                label="About Content"
+                value={settings.about_content || ''}
+                onChange={(e) => updateSetting('about_content', e.target.value)}
+                placeholder="Tell visitors about yourself, your artistic journey, and your inspiration..."
+                rows={6}
+              />
+            </div>
+          </div>
         </div>
       )}
     </SettingsForm>

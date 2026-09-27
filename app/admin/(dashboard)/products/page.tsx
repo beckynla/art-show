@@ -85,7 +85,9 @@ export default async function ProductsPage() {
                               />
                             </div>
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">{product.title}</div>
+                              <div className="text-sm font-medium text-gray-900">
+                                {product.title || <span className="text-gray-400 italic">Untitled</span>}
+                              </div>
                               {product.sku && (
                                 <div className="text-sm text-gray-500">SKU: {product.sku}</div>
                               )}

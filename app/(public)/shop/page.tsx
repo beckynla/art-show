@@ -4,6 +4,7 @@ import { getSettings } from '@/lib/settings'
 import { parseImages } from '@/lib/images'
 import { ProductCard } from '@/components/public/ProductCard'
 import { ProductFilters } from '@/components/public/ProductFilters'
+import { Reveal } from '@/components/public/Reveal'
 
 interface ShopPageProps {
   searchParams: Promise<{ category?: string; sort?: string }>
@@ -11,7 +12,9 @@ interface ShopPageProps {
 
 async function getProducts(category?: string, sort?: string) {
   const where = {
-    status: { in: ['available', 'sold'] as string[] },
+    // Show every piece in the gallery except explicitly hidden ones.
+    // Most pieces are "display" (not for sale); "available" pieces get a discreet indicator.
+    status: { not: 'hidden' },
     ...(category ? { category } : {}),
   }
 
@@ -62,7 +65,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         <div className="relative h-48 md:h-64 bg-gray-900">
           <Image
             src={bannerImage}
-            alt={title || 'Shop'}
+            alt={title || 'Gallery'}
             fill
             className="object-cover"
           />
@@ -109,8 +112,10 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8">
-            {productsWithImages.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {productsWithImages.map((product, i) => (
+              <Reveal key={product.id} delay={(i % 4) * 80}>
+                <ProductCard product={product} />
+              </Reveal>
             ))}
           </div>
         )}

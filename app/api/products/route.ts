@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 import { stringifyImages } from '@/lib/images'
+import { generateUniqueSlug } from '@/lib/products'
 
 export async function GET() {
   try {
@@ -47,41 +48,25 @@ export async function POST(request: Request) {
       featured,
     } = body
 
-    // Validate required fields
-    if (!title || !slug || !price) {
-      return NextResponse.json(
-        { error: 'Title, slug, and price are required' },
-        { status: 400 }
-      )
-    }
-
-    // Check for duplicate slug
-    const existingProduct = await prisma.product.findUnique({
-      where: { slug },
-    })
-
-    if (existingProduct) {
-      return NextResponse.json(
-        { error: 'A product with this slug already exists' },
-        { status: 400 }
-      )
-    }
+    // All descriptor fields are optional. Derive a unique slug from whatever
+    // is provided (explicit slug → title → fallback) and default price to 0.
+    const finalSlug = await generateUniqueSlug(slug || title || '')
 
     const product = await prisma.product.create({
       data: {
-        title,
-        slug,
-        description,
-        price,
-        comparePrice,
+        title: title || '',
+        slug: finalSlug,
+        description: description || null,
+        price: typeof price === 'number' ? price : 0,
+        comparePrice: typeof comparePrice === 'number' ? comparePrice : null,
         images: stringifyImages(images || []),
-        category,
+        category: category || null,
         width,
         height,
         depth,
         dimensionUnit: dimensionUnit || 'inches',
         weight,
-        sku,
+        sku: sku || null,
         quantity: quantity || 1,
         status: status || 'available',
         featured: featured || false,

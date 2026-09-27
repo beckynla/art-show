@@ -30,7 +30,8 @@ interface ProductFormProps {
 }
 
 const statusOptions = [
-  { value: 'available', label: 'Available' },
+  { value: 'display', label: 'Display Only (not for sale)' },
+  { value: 'available', label: 'Available (for sale)' },
   { value: 'sold', label: 'Sold' },
   { value: 'reserved', label: 'Reserved' },
   { value: 'hidden', label: 'Hidden' },
@@ -102,7 +103,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
         title: formData.title,
         slug: formData.slug,
         description: formData.description || null,
-        price: Math.round(parseFloat(formData.price) * 100),
+        price: formData.price ? Math.round(parseFloat(formData.price) * 100) : 0,
         comparePrice: formData.comparePrice
           ? Math.round(parseFloat(formData.comparePrice) * 100)
           : null,
@@ -181,17 +182,16 @@ export function ProductForm({ product, categories }: ProductFormProps) {
             name="title"
             value={formData.title}
             onChange={handleChange}
-            required
             placeholder="e.g., Sunset Over Mountains"
+            helpText="Optional — leave blank for an untitled piece"
           />
           <Input
             label="Slug"
             name="slug"
             value={formData.slug}
             onChange={handleChange}
-            required
             placeholder="e.g., sunset-over-mountains"
-            helpText="URL-friendly version of the title"
+            helpText="Optional — auto-generated if left blank"
           />
           <div className="md:col-span-2">
             <Textarea
@@ -224,8 +224,8 @@ export function ProductForm({ product, categories }: ProductFormProps) {
             min="0"
             value={formData.price}
             onChange={handleChange}
-            required
             placeholder="0.00"
+            helpText="Optional — prices are not shown publicly"
           />
           <Input
             label="Compare at Price"

@@ -1,10 +1,23 @@
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/db'
 import { parseImages } from '@/lib/images'
-import { formatCurrency } from '@/lib/stripe'
 import { ProductGallery } from '@/components/public/ProductGallery'
-import { AddToCartButton } from '@/components/public/AddToCartButton'
+import { InquiryButton } from '@/components/public/InquiryButton'
 import { ProductCard } from '@/components/public/ProductCard'
+import { Reveal } from '@/components/public/Reveal'
+
+function formatSize(product: {
+  width: number | null
+  height: number | null
+  depth: number | null
+  dimensionUnit: string
+}): string | null {
+  const parts = [product.width, product.height, product.depth].filter(
+    (v): v is number => typeof v === 'number' && v > 0
+  )
+  if (parts.length === 0) return null
+  return `${parts.join(' × ')} ${product.dimensionUnit || 'inches'}`
+}
 
 async function getProduct(slug: string) {
   const product = await prisma.product.findUnique({
@@ -50,32 +63,29 @@ export default async function ProductPage({
   }
 
   const relatedProducts = await getRelatedProducts(product.category, product.id)
-  const isAvailable = product.status === 'available'
+  const size = formatSize(product)
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Gallery */}
-        <ProductGallery images={product.images} title={product.title} />
+        <ProductGallery images={product.images} title={product.title || 'Artwork'} />
 
         {/* Product Info */}
         <div>
-          <h1 className="text-3xl font-bold font-heading text-gray-900">
-            {product.title}
-          </h1>
+          {/* Title — prominent (only if the piece has one) */}
+          {product.title && (
+            <h1 className="text-4xl md:text-5xl font-bold font-heading text-gray-900 leading-tight">
+              {product.title}
+            </h1>
+          )}
 
-          <div className="mt-4 flex items-center gap-4">
-            <span className="text-2xl font-bold text-gray-900">
-              {formatCurrency(product.price)}
-            </span>
-            {product.comparePrice && product.comparePrice > product.price && (
-              <span className="text-lg text-gray-500 line-through">
-                {formatCurrency(product.comparePrice)}
-              </span>
-            )}
-          </div>
+          {/* Size — prominent */}
+          {size && (
+            <p className="mt-3 text-xl text-gray-600">{size}</p>
+          )}
 
-          {!isAvailable && (
+          {(product.status === 'sold' || product.status === 'reserved') && (
             <div className="mt-4 inline-block bg-gray-100 text-gray-800 px-4 py-2 rounded-full font-medium">
               {product.status === 'sold' ? 'Sold' : 'Reserved'}
             </div>
@@ -89,36 +99,10 @@ export default async function ProductPage({
             </div>
           )}
 
-          {/* Dimensions */}
-          {(product.width || product.height || product.depth) && (
-            <div className="mt-6">
-              <h3 className="text-sm font-medium text-gray-900">Dimensions</h3>
-              <p className="mt-1 text-gray-600">
-                {[
-                  product.width && `${product.width}`,
-                  product.height && `${product.height}`,
-                  product.depth && `${product.depth}`,
-                ]
-                  .filter(Boolean)
-                  .join(' x ')}{' '}
-                {product.dimensionUnit}
-              </p>
-            </div>
-          )}
-
-          {/* Add to Cart */}
-          {isAvailable && (
-            <div className="mt-8">
-              <AddToCartButton
-                product={{
-                  id: product.id,
-                  title: product.title,
-                  price: product.price,
-                  image: product.images[0]?.url || null,
-                }}
-              />
-            </div>
-          )}
+          {/* Inquiry — available on every piece */}
+          <div className="mt-8">
+            <InquiryButton productId={product.id} productTitle={product.title || 'this piece'} />
+          </div>
 
           {/* SKU */}
           {product.sku && (
@@ -134,8 +118,10 @@ export default async function ProductPage({
             Related Artwork
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {relatedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {relatedProducts.map((product, i) => (
+              <Reveal key={product.id} delay={(i % 4) * 80}>
+                <ProductCard product={product} />
+              </Reveal>
             ))}
           </div>
         </section>
