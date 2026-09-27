@@ -158,7 +158,8 @@ export async function getThemeSettings() {
     bodyFont: settings.body_font || 'system-ui',
     headingFont: settings.heading_font || 'system-ui',
     backgroundImage: settings.background_image || null,
-    backgroundImageStyle: settings.background_image_style === 'tile' ? 'tile' : 'cover',
+    backgroundImageStyle: (settings.background_image_style === 'tile' ? 'tile' : 'cover') as 'cover' | 'tile',
+    backgroundParallax: settings.background_parallax !== 'false',
     // How strongly the image shows through the background color (0–100)
     backgroundImageStrength: Math.min(
       100,

@@ -125,6 +125,20 @@ export default function AppearanceSettingsPage() {
                   { value: '100', label: 'Full (may make text hard to read)' },
                 ]}
               />
+              <label className="col-span-2 flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={settings.background_parallax !== 'false'}
+                  onChange={(e) => updateSetting('background_parallax', e.target.checked ? 'true' : 'false')}
+                  className="mt-0.5 h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                />
+                <span>
+                  <span className="block text-sm font-medium text-gray-900">Parallax scrolling</span>
+                  <span className="block text-sm text-gray-500">
+                    The background drifts slowly as visitors scroll, adding a sense of depth
+                  </span>
+                </span>
+              </label>
             </div>
           )}
 
