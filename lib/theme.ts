@@ -149,7 +149,7 @@ export async function getThemeSettings() {
   const settings = await getAllSettings()
 
   return {
-    shopName: settings.shop_name || 'ArtBox',
+    shopName: settings.shop_name || 'Gallery',
     shopTagline: settings.shop_tagline || '',
     shopLogo: settings.shop_logo || null,
     currency: settings.currency || 'USD',

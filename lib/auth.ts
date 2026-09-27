@@ -5,7 +5,7 @@ import { createHmac, timingSafeEqual } from 'crypto'
 import { prisma } from './db'
 import type { Session, User } from '@/types'
 
-const SESSION_COOKIE_NAME = 'artbox_session'
+const SESSION_COOKIE_NAME = 'gallery_session'
 const SESSION_EXPIRY_DAYS = 7
 
 function getSessionSecret(): string {

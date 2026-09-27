@@ -20,7 +20,7 @@ export function Sidebar() {
     <aside className="fixed inset-y-0 left-0 w-64 bg-gray-900 text-white">
       <div className="flex h-16 items-center justify-center border-b border-gray-800">
         <Link href="/admin" className="text-xl font-bold">
-          ArtBox Admin
+          Admin
         </Link>
       </div>
 

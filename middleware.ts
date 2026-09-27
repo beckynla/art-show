@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-const SESSION_COOKIE_NAME = 'artbox_session'
+const SESSION_COOKIE_NAME = 'gallery_session'
 
 // Routes that require authentication
 const protectedRoutes = ['/admin']
