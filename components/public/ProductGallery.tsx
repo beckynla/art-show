@@ -15,7 +15,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
 
   if (images.length === 0) {
     return (
-      <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
+      <div className="aspect-square bg-gray-100 flex items-center justify-center">
         <span className="text-gray-400">No image</span>
       </div>
     )
@@ -28,12 +28,14 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
         src={images[selectedIndex].url}
         alt={`${title} - Image ${selectedIndex + 1}`}
       >
-        <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 cursor-zoom-in">
+        {/* Natural aspect ratio; tall pieces are capped to the viewport height */}
+        <div className="relative flex justify-center overflow-hidden bg-gray-100 cursor-zoom-in">
           <Image
             src={images[selectedIndex].url}
             alt={`${title} - Image ${selectedIndex + 1}`}
-            fill
-            className="object-cover"
+            width={0}
+            height={0}
+            className="block w-auto h-auto max-w-full max-h-[75vh]"
             priority
             sizes="(max-width: 1024px) 100vw, 50vw"
           />
@@ -53,7 +55,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
             <button
               key={index}
               onClick={() => setSelectedIndex(index)}
-              className={`relative flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden ${
+              className={`relative flex-shrink-0 w-20 h-20 overflow-hidden ${
                 index === selectedIndex
                   ? 'ring-2 ring-primary-600'
                   : 'ring-1 ring-gray-200 hover:ring-gray-300'
@@ -63,7 +65,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
                 src={image.url}
                 alt={`${title} - Thumbnail ${index + 1}`}
                 fill
-                className="object-cover"
+                className="object-contain bg-gray-100"
                 sizes="80px"
               />
             </button>

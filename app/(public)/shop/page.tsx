@@ -97,9 +97,9 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
             <p className="text-gray-500">{emptyMessage}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8">
+          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 mt-8">
             {productsWithImages.map((product, i) => (
-              <Reveal key={product.id} delay={(i % 4) * 80}>
+              <Reveal key={product.id} delay={(i % 4) * 80} className="break-inside-avoid mb-8">
                 <ProductCard product={product} />
               </Reveal>
             ))}

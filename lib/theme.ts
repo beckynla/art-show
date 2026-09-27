@@ -157,5 +157,12 @@ export async function getThemeSettings() {
     accentColor: settings.accent_color || '#d946ef',
     bodyFont: settings.body_font || 'system-ui',
     headingFont: settings.heading_font || 'system-ui',
+    backgroundImage: settings.background_image || null,
+    backgroundImageStyle: settings.background_image_style === 'tile' ? 'tile' : 'cover',
+    // How strongly the image shows through the background color (0–100)
+    backgroundImageStrength: Math.min(
+      100,
+      Math.max(0, parseInt(settings.background_image_strength || '20', 10) || 20)
+    ),
   }
 }

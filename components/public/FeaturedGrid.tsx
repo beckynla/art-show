@@ -19,9 +19,9 @@ interface FeaturedGridProps {
 
 export function FeaturedGrid({ items }: FeaturedGridProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6">
       {items.map((item, i) => (
-        <Reveal key={item.id} delay={(i % 4) * 80}>
+        <Reveal key={item.id} delay={(i % 4) * 80} className="break-inside-avoid mb-6">
           <FeaturedCard item={item} />
         </Reveal>
       ))}
@@ -31,15 +31,17 @@ export function FeaturedGrid({ items }: FeaturedGridProps) {
 
 function FeaturedCard({ item }: { item: FeaturedItem }) {
   const cardContent = (
-    <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       {item.image && (
         <ImageLightbox src={item.image} alt={item.title || 'Featured'}>
-          <div className="relative aspect-square">
+          <div className="relative overflow-hidden">
             <Image
               src={item.image}
               alt={item.title || 'Featured'}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              width={0}
+              height={0}
+              className="block w-full h-auto group-hover:scale-105 transition-transform duration-300"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             />
           </div>
         </ImageLightbox>
@@ -65,15 +67,17 @@ function FeaturedCard({ item }: { item: FeaturedItem }) {
   if (item.link) {
     return (
       <div className="group">
-        <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow">
           {item.image && (
             <ImageLightbox src={item.image} alt={item.title || 'Featured'}>
-              <div className="relative aspect-square">
+              <div className="relative overflow-hidden">
                 <Image
                   src={item.image}
                   alt={item.title || 'Featured'}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  width={0}
+                  height={0}
+                  className="block w-full h-auto group-hover:scale-105 transition-transform duration-300"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 />
               </div>
             </ImageLightbox>

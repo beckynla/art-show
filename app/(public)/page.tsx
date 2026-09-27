@@ -51,6 +51,44 @@ export default async function HomePage() {
   const hasGreetingContent =
     homepage.greeting_title || homepage.greeting_content || homepage.greeting_image
 
+  // How much space the greeting takes up, set in admin ('large' is the original look)
+  const greetingSizes = {
+    large: {
+      section: 'pt-16 md:pt-24 pb-8 md:pb-10',
+      container: 'max-w-7xl',
+      gap: 'gap-12',
+      image: 'w-full md:flex-1',
+      title: 'text-3xl md:text-4xl mb-6',
+      text: 'text-lg',
+    },
+    medium: {
+      section: 'pt-12 md:pt-16 pb-8',
+      container: 'max-w-5xl',
+      gap: 'gap-10',
+      image: 'w-full max-w-md md:w-2/5',
+      title: 'text-2xl md:text-3xl mb-4',
+      text: 'text-base',
+    },
+    small: {
+      section: 'pt-10 md:pt-12 pb-6',
+      container: 'max-w-3xl',
+      gap: 'gap-8',
+      image: 'w-full max-w-[240px] md:w-1/3',
+      title: 'text-xl md:text-2xl mb-3',
+      text: 'text-base',
+    },
+    tiny: {
+      section: 'pt-8 pb-4',
+      container: 'max-w-2xl',
+      gap: 'gap-6',
+      image: 'w-32 md:w-40',
+      title: 'text-lg mb-2',
+      text: 'text-sm',
+    },
+  }
+  const greetingSize =
+    greetingSizes[homepage.greeting_size as keyof typeof greetingSizes] || greetingSizes.large
+
   return (
     <div>
       {/* Hero Section — optional image at the very top */}
@@ -85,10 +123,11 @@ export default async function HomePage() {
 
       {/* Greeting Section — homepage welcome, distinct from the /about page */}
       {showGreeting && hasGreetingContent && (
-        <section className="pt-16 md:pt-24 pb-8 md:pb-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <section className={greetingSize.section}>
+          <div className={`${greetingSize.container} mx-auto px-4 sm:px-6 lg:px-8`}>
+            <div className={`flex flex-col md:flex-row items-center ${greetingSize.gap}`}>
               {homepage.greeting_image && (
+                <div className={`shrink-0 ${greetingSize.image}`}>
                 <ImageLightbox src={homepage.greeting_image} alt={homepage.greeting_title || 'Welcome'}>
                   <div className="relative aspect-square rounded-lg overflow-hidden cursor-zoom-in">
                     <Image
@@ -99,20 +138,30 @@ export default async function HomePage() {
                     />
                   </div>
                 </ImageLightbox>
+                </div>
               )}
-              <div className={homepage.greeting_image ? '' : 'md:col-span-2 text-center max-w-2xl mx-auto'}>
+              <div className={homepage.greeting_image ? 'flex-1' : 'text-center max-w-2xl mx-auto'}>
                 {homepage.greeting_title && (
-                  <h2 className="text-3xl md:text-4xl font-bold font-heading text-gray-900 mb-6">
+                  <h2 className={`font-bold font-heading text-gray-900 ${greetingSize.title}`}>
                     {homepage.greeting_title}
                   </h2>
                 )}
                 {homepage.greeting_content && (
-                  <div className="prose prose-lg text-gray-600">
+                  <div className={`text-gray-600 ${greetingSize.text}`}>
                     {homepage.greeting_content.split('\n').map((paragraph, i) => (
                       <p key={i}>{paragraph}</p>
                     ))}
                   </div>
                 )}
+                <Link
+                  href="/shop"
+                  className="group mt-6 inline-flex items-center gap-3 border border-gray-900 px-8 py-3.5 text-xs font-medium uppercase tracking-[0.2em] text-gray-900 transition-colors duration-300 ease-out hover:bg-gray-900 hover:text-white"
+                >
+                  View Paintings in Gallery
+                  <span className="transition-transform duration-300 ease-out group-hover:translate-x-1">
+                    &rarr;
+                  </span>
+                </Link>
               </div>
             </div>
           </div>
@@ -121,7 +170,7 @@ export default async function HomePage() {
 
       {/* Featured images — a curated showcase beneath the hero/profile */}
       {showFeatured && featuredItems.length > 0 && (
-        <section className="pt-8 md:pt-10 pb-16 md:pb-24 bg-gray-50">
+        <section className="pt-8 md:pt-10 pb-16 md:pb-24 bg-black/[0.03]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {(homepage.featured_title || homepage.featured_description) && (
               <div className="text-center mb-12">

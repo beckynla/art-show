@@ -186,6 +186,18 @@ export default function HomepageSettingsPage() {
               </p>
 
               <div className="space-y-4">
+                <Select
+                  label="Greeting Size"
+                  value={settings.greeting_size || 'large'}
+                  onChange={(e) => updateSetting('greeting_size', e.target.value)}
+                  helpText="How much space the greeting takes up — photo, text and spacing all scale together"
+                  options={[
+                    { value: 'large', label: 'Large' },
+                    { value: 'medium', label: 'Medium' },
+                    { value: 'small', label: 'Small' },
+                    { value: 'tiny', label: 'Extra Small' },
+                  ]}
+                />
                 <SettingsImageInput
                   label="Greeting Photo"
                   value={settings.greeting_image || ''}

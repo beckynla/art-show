@@ -2,6 +2,7 @@
 
 import { Input, Select } from '@/components/ui'
 import { SettingsForm } from '@/components/admin/SettingsForm'
+import { SettingsImageInput } from '@/components/admin/SettingsImageInput'
 
 const fontOptions = [
   { value: 'system-ui', label: 'System Default' },
@@ -89,6 +90,43 @@ export default function AppearanceSettingsPage() {
             Primary and accent colors are used for buttons, links, and accents. The background color
             fills the page behind your artwork. Light backgrounds keep text easiest to read.
           </p>
+
+          <h3 className="text-lg font-medium text-gray-900 border-b pb-2 pt-4">Background Image</h3>
+
+          <SettingsImageInput
+            label="Background Image"
+            value={settings.background_image || ''}
+            onChange={(url) => updateSetting('background_image', url)}
+            helpText="Shown behind every page of your site. Leave empty for a plain background color."
+          />
+
+          {settings.background_image && (
+            <div className="grid grid-cols-2 gap-4">
+              <Select
+                label="Style"
+                value={settings.background_image_style || 'cover'}
+                onChange={(e) => updateSetting('background_image_style', e.target.value)}
+                helpText="Fill suits photos; Tile suits textures like paper or canvas"
+                options={[
+                  { value: 'cover', label: 'Fill screen' },
+                  { value: 'tile', label: 'Tile (repeat pattern)' },
+                ]}
+              />
+              <Select
+                label="Strength"
+                value={settings.background_image_strength || '20'}
+                onChange={(e) => updateSetting('background_image_strength', e.target.value)}
+                helpText="Softer blends into your background color so text stays readable"
+                options={[
+                  { value: '10', label: 'Very soft' },
+                  { value: '20', label: 'Soft' },
+                  { value: '35', label: 'Medium' },
+                  { value: '60', label: 'Strong' },
+                  { value: '100', label: 'Full (may make text hard to read)' },
+                ]}
+              />
+            </div>
+          )}
 
           <h3 className="text-lg font-medium text-gray-900 border-b pb-2 pt-4">Fonts</h3>
 

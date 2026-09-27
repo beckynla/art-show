@@ -43,12 +43,14 @@ export function ProductCard({ product }: ProductCardProps) {
       href={`/product/${product.slug}`}
       className="group block transition-transform duration-300 ease-out hover:-translate-y-2"
     >
-      <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 mb-4 shadow-sm transition-shadow duration-300 group-hover:shadow-2xl">
+      {/* Natural aspect ratio — artwork is never cropped or stretched */}
+      <div className="relative overflow-hidden bg-gray-100 mb-4 shadow-sm transition-shadow duration-300 group-hover:shadow-2xl">
         <Image
           src={primaryImage}
           alt={product.title}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          width={0}
+          height={0}
+          className="block w-full h-auto group-hover:scale-105 transition-transform duration-300"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
       </div>

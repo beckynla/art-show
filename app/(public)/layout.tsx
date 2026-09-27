@@ -29,7 +29,26 @@ export default async function PublicLayout({
     <CartProvider>
       {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
       <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
-      <div className="min-h-screen flex flex-col bg-background">
+      <div className="relative isolate min-h-screen flex flex-col bg-background">
+        {theme.backgroundImage && (
+          <>
+            <div
+              aria-hidden
+              className="fixed inset-0 -z-10 bg-center"
+              style={{
+                backgroundImage: `url("${theme.backgroundImage.replace(/"/g, '%22')}")`,
+                backgroundSize: theme.backgroundImageStyle === 'tile' ? 'auto' : 'cover',
+                backgroundRepeat: theme.backgroundImageStyle === 'tile' ? 'repeat' : 'no-repeat',
+              }}
+            />
+            {/* Veil in the background color controls how strongly the image shows */}
+            <div
+              aria-hidden
+              className="fixed inset-0 -z-10 bg-background"
+              style={{ opacity: 1 - theme.backgroundImageStrength / 100 }}
+            />
+          </>
+        )}
         <Header shopName={theme.shopName} shopLogo={theme.shopLogo} showAbout={showAbout} />
         <main className="flex-1">{children}</main>
         <Footer showAbout={showAbout} />
