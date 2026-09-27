@@ -5,9 +5,14 @@ export default async function ContactPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold font-heading text-gray-900 mb-6">
-        {contact.contact_heading || 'Contact'}
-      </h1>
+      {/* Heading is optional; keep an accessible page title for screen readers when it's hidden */}
+      {contact.contact_heading ? (
+        <h1 className="text-3xl font-bold font-heading text-gray-900 mb-6">
+          {contact.contact_heading}
+        </h1>
+      ) : (
+        <h1 className="sr-only">Contact</h1>
+      )}
 
       {contact.contact_intro && (
         <div className="prose prose-lg text-gray-600 max-w-3xl mb-10">

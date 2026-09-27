@@ -19,6 +19,7 @@ export default function ContactSettingsPage() {
             value={settings.contact_heading || ''}
             onChange={(e) => updateSetting('contact_heading', e.target.value)}
             placeholder="Contact"
+            helpText="Leave empty to show no heading"
           />
           <Textarea
             label="Intro Text"
