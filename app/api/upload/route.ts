@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
+import { getUploadsDir, IMAGE_EXTENSIONS } from '@/lib/storage'
 import { getSession } from '@/lib/auth'
 import { generateUploadFilename, isAllowedImageType, isValidImageSize } from '@/lib/images'
 
@@ -36,13 +37,14 @@ export async function POST(request: Request) {
     }
 
     // Ensure uploads directory exists
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads')
+    const uploadsDir = getUploadsDir()
     if (!existsSync(uploadsDir)) {
       await mkdir(uploadsDir, { recursive: true })
     }
 
-    // Generate unique filename
-    const filename = generateUploadFilename(file.name)
+    // Generate unique filename; the extension comes from the verified image type,
+    // not the original filename, so nothing but images can be stored
+    const filename = generateUploadFilename(`image.${IMAGE_EXTENSIONS[file.type]}`)
     const filePath = path.join(uploadsDir, filename)
 
     // Write file

@@ -7,6 +7,10 @@ import { generateThemeCSS, getThemeSettings, getGoogleFontsUrl } from '@/lib/the
 import { prisma } from '@/lib/db'
 import { getSetting } from '@/lib/settings'
 
+// Every public page reads admin settings (theme, text, images) from the database,
+// so render on each request rather than freezing them at build time
+export const dynamic = 'force-dynamic'
+
 export default async function PublicLayout({
   children,
 }: {
