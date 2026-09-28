@@ -8,7 +8,7 @@ export default function LegalSettingsPage() {
     <SettingsForm
       group="legal"
       title="Legal Pages"
-      description="Privacy policy, terms of service, and return policy"
+      description="Privacy policy and terms of service"
     >
       {({ settings, updateSetting }) => (
         <div className="space-y-6">
@@ -35,15 +35,6 @@ export default function LegalSettingsPage() {
             placeholder="Enter your terms of service here..."
             rows={10}
             helpText="Displayed on the /terms page"
-          />
-
-          <Textarea
-            label="Return Policy"
-            value={settings.return_policy || ''}
-            onChange={(e) => updateSetting('return_policy', e.target.value)}
-            placeholder="Enter your return policy here..."
-            rows={10}
-            helpText="Displayed on the /returns page"
           />
         </div>
       )}

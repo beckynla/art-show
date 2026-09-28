@@ -43,11 +43,6 @@ export async function Footer({ showAbout }: { showAbout: boolean }) {
                   Contact
                 </Link>
               </li>
-              <li>
-                <Link href="/returns" className="hover:text-white transition-colors">
-                  Returns
-                </Link>
-              </li>
             </ul>
           </div>
 

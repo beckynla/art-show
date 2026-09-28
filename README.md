@@ -10,7 +10,7 @@ Visitors browse the artwork and send an inquiry about any piece; there is no pub
 - **Homepage** — optional hero banner, a greeting section (photo, message, adjustable size, "View Paintings in Gallery" button) and a curated featured grid.
 - **Gallery** (`/shop`) — masonry layout that shows every piece uncropped at its true proportions, reading left to right. Optional category filter.
 - **Artwork page** (`/product/[slug]`) — full image with zoom lightbox, extra photos, size, and an **Inquire About This Piece** form.
-- **About**, **Contact**, **Privacy**, **Terms**, **Returns** pages, with text edited in admin. The About page can be switched off entirely.
+- **About** and **Contact** pages, with text edited in admin. The About page can be switched off entirely. **Privacy** and **Terms** pages also exist but aren't linked from the site.
 - **Site-wide theming** — primary/accent/background colors, Google Fonts, and an optional background image (fill or tiled, adjustable strength, parallax scrolling).
 - Translucent navigation bar that blends into the page and frosts once scrolled.
 
@@ -45,7 +45,7 @@ app/
     page.tsx           Homepage
     shop/              Gallery
     product/[slug]/    Artwork page
-    about/ contact/ privacy/ terms/ returns/ cart/ checkout/
+    about/ contact/ privacy/ terms/ cart/ checkout/
   admin/
     (auth)/login/      Admin login
     (dashboard)/       Admin pages: products, products/arrange, inquiries, orders,
