@@ -34,8 +34,8 @@ export function ImageInput({ images, onChange, maxImages = 10 }: ImageInputProps
           continue
         }
 
-        if (file.size > 5 * 1024 * 1024) {
-          setError('Images must be under 5MB')
+        if (file.size > 25 * 1024 * 1024) {
+          setError('Images must be under 25MB')
           continue
         }
 
@@ -214,7 +214,7 @@ export function ImageInput({ images, onChange, maxImages = 10 }: ImageInputProps
                 </>
               )}
             </p>
-            <p className="text-sm text-gray-500 mt-1">PNG, JPG, GIF, WebP up to 5MB</p>
+            <p className="text-sm text-gray-500 mt-1">PNG, JPG, GIF, WebP up to 25MB — large photos are resized automatically</p>
           </label>
         </div>
       )}

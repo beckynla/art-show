@@ -89,8 +89,10 @@ export function isAllowedImageType(mimeType: string): boolean {
   return getAllowedImageTypes().includes(mimeType)
 }
 
-// Maximum file size for uploads (5MB)
-export const MAX_IMAGE_SIZE = 5 * 1024 * 1024
+// Maximum file size for uploads (25MB). Photos are resized after upload, so large
+// phone-camera originals are fine; GIFs are stored as-is and keep a smaller limit.
+export const MAX_IMAGE_SIZE = 25 * 1024 * 1024
+export const MAX_GIF_SIZE = 5 * 1024 * 1024
 
 // Check if file size is within limits
 export function isValidImageSize(sizeInBytes: number): boolean {

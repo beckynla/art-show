@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server'
 import { writeFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
-import { getUploadsDir, IMAGE_EXTENSIONS } from '@/lib/storage'
+import { getUploadsDir } from '@/lib/storage'
+import { processUploadedImage } from '@/lib/imageProcessing'
 import { getSession } from '@/lib/auth'
-import { generateUploadFilename, isAllowedImageType, isValidImageSize } from '@/lib/images'
+import { generateUploadFilename, isAllowedImageType, isValidImageSize, MAX_GIF_SIZE } from '@/lib/images'
 
 export async function POST(request: Request) {
   try {
@@ -31,7 +32,13 @@ export async function POST(request: Request) {
     // Validate file size
     if (!isValidImageSize(file.size)) {
       return NextResponse.json(
-        { error: 'File too large. Maximum size is 5MB' },
+        { error: 'File too large. Maximum size is 25MB' },
+        { status: 400 }
+      )
+    }
+    if (file.type === 'image/gif' && file.size > MAX_GIF_SIZE) {
+      return NextResponse.json(
+        { error: 'GIF too large. Maximum size for GIFs is 5MB' },
         { status: 400 }
       )
     }
@@ -42,15 +49,21 @@ export async function POST(request: Request) {
       await mkdir(uploadsDir, { recursive: true })
     }
 
-    // Generate unique filename; the extension comes from the verified image type,
+    // Resize, orient and strip metadata; the extension comes from the processed output,
     // not the original filename, so nothing but images can be stored
-    const filename = generateUploadFilename(`image.${IMAGE_EXTENSIONS[file.type]}`)
-    const filePath = path.join(uploadsDir, filename)
+    let processed
+    try {
+      processed = await processUploadedImage(Buffer.from(await file.arrayBuffer()), file.type)
+    } catch (error) {
+      console.error('Error processing image:', error)
+      return NextResponse.json(
+        { error: 'This image could not be read. Try saving it as a JPEG and uploading again.' },
+        { status: 400 }
+      )
+    }
 
-    // Write file
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    await writeFile(filePath, buffer)
+    const filename = generateUploadFilename(`image.${processed.extension}`)
+    await writeFile(path.join(uploadsDir, filename), processed.buffer)
 
     const url = `/uploads/${filename}`
 
