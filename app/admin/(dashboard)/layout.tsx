@@ -3,6 +3,7 @@ import { getSession, getCurrentUser } from '@/lib/auth'
 import { Sidebar } from '@/components/admin/Sidebar'
 import { Header } from '@/components/admin/Header'
 import { ToastProvider } from '@/components/ui'
+import { ensureDailySnapshot } from '@/lib/backup'
 
 export default async function AdminLayout({
   children,
@@ -17,6 +18,9 @@ export default async function AdminLayout({
   }
 
   const user = await getCurrentUser()
+
+  // Keep a daily database snapshot from before the day's edits (runs in the background)
+  void ensureDailySnapshot()
 
   return (
     <ToastProvider>
