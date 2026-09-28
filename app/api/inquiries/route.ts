@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getSession } from '@/lib/auth'
+import { buildInquiryEmail, getNotificationEmail, sendEmail } from '@/lib/email'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -32,6 +33,25 @@ export async function POST(request: Request) {
     await prisma.inquiry.create({
       data: { name, email, message, productId, productTitle },
     })
+
+    // Email the artist. The inquiry is already saved, so a failed email never
+    // fails the visitor's submission; it stays visible in admin either way.
+    try {
+      const to = await getNotificationEmail()
+      if (to) {
+        const product = productId
+          ? await prisma.product.findUnique({ where: { id: productId }, select: { slug: true } })
+          : null
+        const result = await sendEmail({
+          to,
+          replyTo: email,
+          ...buildInquiryEmail({ name, email, message, productTitle, productSlug: product?.slug ?? null }),
+        })
+        if (!result.ok) console.error('Inquiry notification not sent:', result.error)
+      }
+    } catch (error) {
+      console.error('Inquiry notification failed:', error)
+    }
 
     return NextResponse.json({ success: true }, { status: 201 })
   } catch (error) {

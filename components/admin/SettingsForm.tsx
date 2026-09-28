@@ -11,6 +11,7 @@ interface SettingsFormProps {
   children: (props: {
     settings: Record<string, string>
     updateSetting: (key: string, value: string) => void
+    hasChanges: boolean
   }) => React.ReactNode
 }
 
@@ -100,7 +101,7 @@ export function SettingsForm({ group, title, description, children }: SettingsFo
       )}
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        {children({ settings, updateSetting })}
+        {children({ settings, updateSetting, hasChanges })}
       </div>
 
       <div className="mt-6 flex items-center justify-between">

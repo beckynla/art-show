@@ -2,6 +2,7 @@
 
 import { Input, Textarea } from '@/components/ui'
 import { SettingsForm } from '@/components/admin/SettingsForm'
+import { TestEmailButton } from '@/components/admin/TestEmailButton'
 
 export default function ContactSettingsPage() {
   return (
@@ -10,7 +11,7 @@ export default function ContactSettingsPage() {
       title="Contact Settings"
       description="Contact information and social links"
     >
-      {({ settings, updateSetting }) => (
+      {({ settings, updateSetting, hasChanges }) => (
         <div className="space-y-6">
           <h3 className="text-lg font-medium text-gray-900 border-b pb-2">Contact Page Text</h3>
 
@@ -52,6 +53,20 @@ export default function ContactSettingsPage() {
             placeholder="123 Art Street&#10;New York, NY 10001"
             rows={3}
           />
+
+          <h3 className="text-lg font-medium text-gray-900 border-b pb-2 pt-4">Inquiry Notifications</h3>
+          <p className="text-sm text-gray-500 -mt-3">
+            Get an email whenever someone sends an inquiry. Replying to the email answers the visitor directly.
+          </p>
+          <Input
+            label="Send inquiry alerts to"
+            type="email"
+            value={settings.inquiry_notify_email || ''}
+            onChange={(e) => updateSetting('inquiry_notify_email', e.target.value)}
+            placeholder={settings.contact_email || 'you@example.com'}
+            helpText="Leave empty to use your contact email above"
+          />
+          <TestEmailButton disabled={hasChanges} />
 
           <h3 className="text-lg font-medium text-gray-900 border-b pb-2 pt-4">Social Links</h3>
 
