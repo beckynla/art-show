@@ -14,7 +14,7 @@ export async function Footer({ showAbout }: { showAbout: boolean }) {
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className={`grid grid-cols-1 gap-8 ${showAbout ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
           {/* Gallery Links */}
           <div>
             <h3 className="text-white font-semibold mb-4">Gallery</h3>
@@ -27,24 +27,19 @@ export async function Footer({ showAbout }: { showAbout: boolean }) {
             </ul>
           </div>
 
-          {/* Info Links */}
-          <div>
-            <h3 className="text-white font-semibold mb-4">Information</h3>
-            <ul className="space-y-2">
-              {showAbout && (
+          {/* Info Links — contact is covered by the Connect column and the main menu */}
+          {showAbout && (
+            <div>
+              <h3 className="text-white font-semibold mb-4">Information</h3>
+              <ul className="space-y-2">
                 <li>
                   <Link href="/about" className="hover:text-white transition-colors">
                     About
                   </Link>
                 </li>
-              )}
-              <li>
-                <Link href="/contact" className="hover:text-white transition-colors">
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </div>
+              </ul>
+            </div>
+          )}
 
           {/* Contact & Social */}
           <div>
