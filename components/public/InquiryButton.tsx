@@ -6,9 +6,10 @@ import { Button, Modal, ModalFooter } from '@/components/ui'
 interface InquiryButtonProps {
   productId: string
   productTitle: string
+  unavailable?: boolean
 }
 
-export function InquiryButton({ productId, productTitle }: InquiryButtonProps) {
+export function InquiryButton({ productId, productTitle, unavailable = false }: InquiryButtonProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -64,7 +65,7 @@ export function InquiryButton({ productId, productTitle }: InquiryButtonProps) {
         onClick={() => setIsOpen(true)}
         className="group inline-flex items-center gap-3 border border-gray-900 px-8 py-3.5 text-xs font-medium uppercase tracking-[0.2em] text-gray-900 transition-colors duration-300 ease-out hover:bg-gray-900 hover:text-white"
       >
-        Inquire About This Piece
+        {unavailable ? 'This Piece Is Unavailable. Inquire Anyway!' : 'Inquire About This Piece'}
         <span className="transition-transform duration-300 ease-out group-hover:translate-x-1">
           &rarr;
         </span>

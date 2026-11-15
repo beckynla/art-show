@@ -101,7 +101,11 @@ export default async function ProductPage({
 
           {/* Inquiry — available on every piece */}
           <div className="mt-8">
-            <InquiryButton productId={product.id} productTitle={product.title || 'this piece'} />
+            <InquiryButton
+              productId={product.id}
+              productTitle={product.title || 'this piece'}
+              unavailable={product.status !== 'available'}
+            />
           </div>
 
           {/* SKU */}
