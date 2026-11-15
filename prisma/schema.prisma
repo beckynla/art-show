@@ -100,3 +100,17 @@ model Setting {
 
   @@index([group])
 }
+
+// One row per public page view, for the admin Analytics page.
+// No cookies or IP addresses are stored; visitorId is a hash that changes every day.
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  referrer  String?  // hostname of the outside site the visit started from
+  device    String   // mobile | tablet | desktop
+  visitorId String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path])
+}

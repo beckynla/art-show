@@ -3,6 +3,7 @@ import { Header } from '@/components/public/Header'
 import { Footer } from '@/components/public/Footer'
 import { CartProvider } from '@/components/public/CartProvider'
 import { BackgroundLayer } from '@/components/public/BackgroundLayer'
+import { PageViewTracker } from '@/components/public/PageViewTracker'
 import { generateThemeCSS, getThemeSettings, getGoogleFontsUrl } from '@/lib/theme'
 import { prisma } from '@/lib/db'
 import { getSetting } from '@/lib/settings'
@@ -34,6 +35,7 @@ export default async function PublicLayout({
     <CartProvider>
       {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
       <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
+      <PageViewTracker />
       <div className="relative isolate min-h-screen flex flex-col bg-background">
         {theme.backgroundImage && (
           <BackgroundLayer
