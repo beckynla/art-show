@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Image from 'next/image'
 import type { ProductImage } from '@/types'
 import { ImageLightbox } from './ImageLightbox'
@@ -12,6 +12,26 @@ interface ProductGalleryProps {
 
 export function ProductGallery({ images, title }: ProductGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const touchStartX = useRef<number | null>(null)
+  const hasMultiple = images.length > 1
+
+  const showPrev = () => setSelectedIndex((i) => (i - 1 + images.length) % images.length)
+  const showNext = () => setSelectedIndex((i) => (i + 1) % images.length)
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return
+    const dx = e.changedTouches[0].clientX - touchStartX.current
+    touchStartX.current = null
+    if (dx > 50) showPrev()
+    else if (dx < -50) showNext()
+  }
+
+  const arrowClass =
+    'absolute top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-900 p-2 rounded-full shadow transition-colors'
 
   if (images.length === 0) {
     return (
@@ -27,9 +47,16 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
       <ImageLightbox
         src={images[selectedIndex].url}
         alt={`${title} - Image ${selectedIndex + 1}`}
+        onPrev={hasMultiple ? showPrev : undefined}
+        onNext={hasMultiple ? showNext : undefined}
+        position={hasMultiple ? `${selectedIndex + 1} / ${images.length}` : undefined}
       >
         {/* Natural aspect ratio; tall pieces are capped to the viewport height */}
-        <div className="relative flex justify-center overflow-hidden bg-gray-100 cursor-zoom-in">
+        <div
+          className="relative flex justify-center overflow-hidden bg-gray-100 cursor-zoom-in"
+          onTouchStart={hasMultiple ? handleTouchStart : undefined}
+          onTouchEnd={hasMultiple ? handleTouchEnd : undefined}
+        >
           <Image
             src={images[selectedIndex].url}
             alt={`${title} - Image ${selectedIndex + 1}`}
@@ -39,6 +66,38 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
             priority
             sizes="(max-width: 1024px) 100vw, 50vw"
           />
+          {/* Previous / next arrows — clicks don't open the lightbox */}
+          {hasMultiple && (
+            <>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  showPrev()
+                }}
+                className={`${arrowClass} left-3`}
+                aria-label="Previous image"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  showNext()
+                }}
+                className={`${arrowClass} right-3`}
+                aria-label="Next image"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </>
+          )}
+
           {/* Zoom hint icon */}
           <div className="absolute bottom-4 right-4 bg-black/50 text-white p-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -49,7 +108,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
       </ImageLightbox>
 
       {/* Thumbnails */}
-      {images.length > 1 && (
+      {hasMultiple && (
         <div className="flex gap-4 overflow-x-auto pb-2">
           {images.map((image, index) => (
             <button
