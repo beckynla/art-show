@@ -149,7 +149,7 @@ export default async function ProductPage({
             <InquiryButton
               productId={product.id}
               productTitle={product.title || 'this piece'}
-              unavailable={product.status === 'sold' || product.status === 'reserved'}
+              unavailable={product.status !== 'available'}
             />
           </div>
 
