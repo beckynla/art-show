@@ -2,15 +2,16 @@ import Image from 'next/image'
 import { getSettings } from '@/lib/settings'
 import { ImageLightbox } from '@/components/public/ImageLightbox'
 
-// Fewer photos get wider columns so a single photo isn't left small
-const PHOTO_GRID: Record<number, string> = {
-  1: 'grid-cols-1 max-w-2xl',
-  2: 'grid-cols-1 sm:grid-cols-2',
-  3: 'grid-cols-1 sm:grid-cols-3',
+// Width of each photo for the size chosen in Settings → Contact
+const PHOTO_WIDTH: Record<string, string> = {
+  small: 'w-40 sm:w-48',
+  medium: 'w-full sm:w-72',
+  large: 'w-full sm:w-[28rem]',
 }
 
 export default async function ContactPage() {
   const contact = await getSettings('contact')
+  const photoWidth = PHOTO_WIDTH[contact.contact_photo_size] || PHOTO_WIDTH.small
   const photos = [contact.contact_photo_1, contact.contact_photo_2, contact.contact_photo_3].filter(
     (url): url is string => Boolean(url)
   )
@@ -39,18 +40,20 @@ export default async function ContactPage() {
 
       {/* Optional photos, set in Settings → Contact */}
       {photos.length > 0 && (
-        <div className={`grid gap-4 items-start mb-10 ${PHOTO_GRID[photos.length]}`}>
+        <div className="flex flex-wrap items-start gap-4 mb-10">
           {photos.map((url, i) => (
-            <ImageLightbox key={url} src={url} alt={`Contact photo ${i + 1}`}>
-              <Image
-                src={url}
-                alt={`Contact photo ${i + 1}`}
-                width={0}
-                height={0}
-                className="block w-full h-auto rounded-lg"
-                sizes="(max-width: 640px) 100vw, 50vw"
-              />
-            </ImageLightbox>
+            <div key={url} className={photoWidth}>
+              <ImageLightbox src={url} alt={`Contact photo ${i + 1}`}>
+                <Image
+                  src={url}
+                  alt={`Contact photo ${i + 1}`}
+                  width={0}
+                  height={0}
+                  className="block w-full h-auto rounded-lg"
+                  sizes="(max-width: 640px) 100vw, 448px"
+                />
+              </ImageLightbox>
+            </div>
           ))}
         </div>
       )}

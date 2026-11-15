@@ -1,6 +1,6 @@
 'use client'
 
-import { Input, Textarea } from '@/components/ui'
+import { Input, Textarea, Select } from '@/components/ui'
 import { SettingsForm } from '@/components/admin/SettingsForm'
 import { SettingsImageInput } from '@/components/admin/SettingsImageInput'
 import { TestEmailButton } from '@/components/admin/TestEmailButton'
@@ -38,6 +38,17 @@ export default function ContactSettingsPage() {
           <p className="text-sm text-gray-500 -mt-3">
             Optional. Add up to three photos, such as your studio or you at work. They appear below the intro text.
           </p>
+          <Select
+            label="Photo Size"
+            value={settings.contact_photo_size || 'small'}
+            onChange={(e) => updateSetting('contact_photo_size', e.target.value)}
+            helpText="How large the photos appear on the contact page. Visitors can click any photo to see it full screen."
+            options={[
+              { value: 'small', label: 'Small' },
+              { value: 'medium', label: 'Medium' },
+              { value: 'large', label: 'Large' },
+            ]}
+          />
           {CONTACT_PHOTO_KEYS.map((key, i) => (
             <SettingsImageInput
               key={key}

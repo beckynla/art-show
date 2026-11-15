@@ -155,6 +155,19 @@ export default async function ProductPage({
             />
           </div>
 
+          {/* Back to the gallery — quieter than the inquiry button above it */}
+          <div className="mt-4">
+            <Link
+              href="/shop"
+              className="group inline-flex items-center gap-3 border border-gray-300 px-8 py-3.5 text-xs font-medium uppercase tracking-[0.2em] text-gray-600 transition-colors duration-300 ease-out hover:border-gray-900 hover:text-gray-900"
+            >
+              <span className="transition-transform duration-300 ease-out group-hover:-translate-x-1">
+                &larr;
+              </span>
+              Return to Gallery
+            </Link>
+          </div>
+
           {/* SKU */}
           {product.sku && (
             <p className="mt-6 text-sm text-gray-500">SKU: {product.sku}</p>
