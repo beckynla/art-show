@@ -1,4 +1,6 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { getGalleryProducts } from '@/lib/gallery'
 import { prisma } from '@/lib/db'
 import { parseImages } from '@/lib/images'
 import { ProductGallery } from '@/components/public/ProductGallery'
@@ -50,6 +52,20 @@ async function getRelatedProducts(category: string | null, excludeId: string) {
   }))
 }
 
+// The pieces before and after this one in the gallery's order, looping around at the ends
+async function getNeighborProducts(currentId: string) {
+  const products = await getGalleryProducts()
+  const index = products.findIndex((p) => p.id === currentId)
+  if (index === -1 || products.length < 2) return { prevProduct: null, nextProduct: null }
+  return {
+    prevProduct: products[(index - 1 + products.length) % products.length],
+    nextProduct: products[(index + 1) % products.length],
+  }
+}
+
+const pieceArrowClass =
+  'fixed top-1/2 -translate-y-1/2 z-40 bg-white/80 hover:bg-white text-gray-900 p-2 sm:p-3 rounded-full shadow-md transition-colors'
+
 export default async function ProductPage({
   params,
 }: {
@@ -62,11 +78,40 @@ export default async function ProductPage({
     notFound()
   }
 
-  const relatedProducts = await getRelatedProducts(product.category, product.id)
+  const [relatedProducts, { prevProduct, nextProduct }] = await Promise.all([
+    getRelatedProducts(product.category, product.id),
+    getNeighborProducts(product.id),
+  ])
   const size = formatSize(product)
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Previous / next piece — pinned to the screen edges so they're always in reach */}
+      {prevProduct && (
+        <Link
+          href={`/product/${prevProduct.slug}`}
+          className={`${pieceArrowClass} left-2 sm:left-4`}
+          aria-label={`Previous piece${prevProduct.title ? `: ${prevProduct.title}` : ''}`}
+          title={prevProduct.title ? `Previous: ${prevProduct.title}` : 'Previous piece'}
+        >
+          <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </Link>
+      )}
+      {nextProduct && (
+        <Link
+          href={`/product/${nextProduct.slug}`}
+          className={`${pieceArrowClass} right-2 sm:right-4`}
+          aria-label={`Next piece${nextProduct.title ? `: ${nextProduct.title}` : ''}`}
+          title={nextProduct.title ? `Next: ${nextProduct.title}` : 'Next piece'}
+        >
+          <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </Link>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Gallery */}
         <ProductGallery images={product.images} title={product.title || 'Artwork'} />
@@ -104,7 +149,7 @@ export default async function ProductPage({
             <InquiryButton
               productId={product.id}
               productTitle={product.title || 'this piece'}
-              unavailable={product.status !== 'available'}
+              unavailable={product.status === 'sold' || product.status === 'reserved'}
             />
           </div>
 
