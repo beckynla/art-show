@@ -61,6 +61,7 @@ export async function PUT(
       quantity,
       status,
       featured,
+      showPrice,
     } = body
 
     // Check if product exists
@@ -102,12 +103,51 @@ export async function PUT(
         quantity: quantity ?? 1,
         status: status || 'available',
         featured: featured || false,
+        showPrice: showPrice === true,
       },
     })
 
     return NextResponse.json({ product })
   } catch (error) {
     console.error('Error updating product:', error)
+    return NextResponse.json(
+      { error: 'Failed to update product' },
+      { status: 500 }
+    )
+  }
+}
+
+const STATUSES = ['available', 'display', 'sold', 'reserved', 'hidden']
+
+// Change only a product's status and/or price visibility, from the product page's admin buttons
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await getSession()
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { id } = await params
+    const { status, showPrice } = await request.json()
+
+    if (status !== undefined && !STATUSES.includes(status)) {
+      return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
+    }
+    if (showPrice !== undefined && typeof showPrice !== 'boolean') {
+      return NextResponse.json({ error: 'Invalid showPrice' }, { status: 400 })
+    }
+
+    const product = await prisma.product.update({
+      where: { id },
+      data: { status, showPrice },
+    })
+
+    return NextResponse.json({ product })
+  } catch (error) {
+    console.error('Error updating product status:', error)
     return NextResponse.json(
       { error: 'Failed to update product' },
       { status: 500 }

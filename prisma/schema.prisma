@@ -35,6 +35,7 @@ model Product {
   quantity      Int      @default(1)
   status        String   @default("available")
   featured      Boolean  @default(false)
+  showPrice     Boolean  @default(false) // show the price on the public product page
   sortOrder     Int      @default(0) // position in the admin's custom gallery arrangement
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

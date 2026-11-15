@@ -2,11 +2,14 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getGalleryProducts } from '@/lib/gallery'
 import { prisma } from '@/lib/db'
+import { getSession } from '@/lib/auth'
+import { formatCurrency } from '@/lib/stripe'
 import { parseImages } from '@/lib/images'
 import { ProductGallery } from '@/components/public/ProductGallery'
 import { InquiryButton } from '@/components/public/InquiryButton'
 import { ProductCard } from '@/components/public/ProductCard'
 import { Reveal } from '@/components/public/Reveal'
+import { AdminProductActions } from '@/components/public/AdminProductActions'
 
 function formatSize(product: {
   width: number | null
@@ -74,7 +77,9 @@ export default async function ProductPage({
   const { slug } = await params
   const product = await getProduct(slug)
 
-  if (!product) {
+  // Hidden pieces are only viewable by a logged-in admin
+  const session = await getSession()
+  if (!product || (product.status === 'hidden' && !session)) {
     notFound()
   }
 
@@ -138,6 +143,11 @@ export default async function ProductPage({
             <p className="mt-3 text-xl text-gray-600">{size}</p>
           )}
 
+          {/* Price — only when the admin has chosen to show it */}
+          {product.showPrice && product.price > 0 && (
+            <p className="mt-2 text-xl text-gray-900">{formatCurrency(product.price)}</p>
+          )}
+
           {product.description && (
             <div className="mt-6 prose prose-gray">
               {product.description.split('\n').map((paragraph, i) => (
@@ -189,6 +199,15 @@ export default async function ProductPage({
             ))}
           </div>
         </section>
+      )}
+
+      {session && (
+        <AdminProductActions
+          productId={product.id}
+          status={product.status}
+          showPrice={product.showPrice}
+          hasPrice={product.price > 0}
+        />
       )}
     </div>
   )

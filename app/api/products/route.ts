@@ -46,6 +46,7 @@ export async function POST(request: Request) {
       quantity,
       status,
       featured,
+      showPrice,
     } = body
 
     // All descriptor fields are optional. Derive a unique slug from whatever
@@ -70,6 +71,7 @@ export async function POST(request: Request) {
         quantity: quantity || 1,
         status: status || 'available',
         featured: featured || false,
+        showPrice: showPrice === true,
       },
     })
 

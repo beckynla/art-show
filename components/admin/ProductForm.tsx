@@ -25,6 +25,7 @@ interface ProductFormProps {
     quantity: number
     status: string
     featured: boolean
+    showPrice: boolean
   }
   categories: { value: string; label: string }[]
 }
@@ -63,6 +64,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
     quantity: product?.quantity?.toString() || '1',
     status: product?.status || 'available',
     featured: product?.featured || false,
+    showPrice: product?.showPrice || false,
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -118,6 +120,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
         quantity: parseInt(formData.quantity) || 1,
         status: formData.status,
         featured: formData.featured,
+        showPrice: formData.showPrice,
       }
 
       const url = isEditing ? `/api/products/${product.id}` : '/api/products'
@@ -225,7 +228,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
             value={formData.price}
             onChange={handleChange}
             placeholder="0.00"
-            helpText="Optional — prices are not shown publicly"
+            helpText="Optional — hidden from visitors unless “Show price” is checked"
           />
           <Input
             label="Compare at Price"
@@ -238,6 +241,19 @@ export function ProductForm({ product, categories }: ProductFormProps) {
             placeholder="0.00"
             helpText="Original price for showing discounts"
           />
+        </div>
+        <div className="mt-4 flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="showPrice"
+            name="showPrice"
+            checked={formData.showPrice}
+            onChange={handleChange}
+            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+          />
+          <label htmlFor="showPrice" className="text-sm font-medium text-gray-700">
+            Show price on the product page
+          </label>
         </div>
       </div>
 
