@@ -125,15 +125,14 @@ export default async function ProductPage({
             </h1>
           )}
 
+          {/* Availability — small print between title and size; unavailable pieces say so on the button */}
+          {product.status === 'available' && (
+            <p className="mt-2 text-sm uppercase tracking-wider text-gray-500">Available</p>
+          )}
+
           {/* Size — prominent */}
           {size && (
             <p className="mt-3 text-xl text-gray-600">{size}</p>
-          )}
-
-          {(product.status === 'sold' || product.status === 'reserved') && (
-            <div className="mt-4 inline-block bg-gray-100 text-gray-800 px-4 py-2 rounded-full font-medium">
-              {product.status === 'sold' ? 'Sold' : 'Reserved'}
-            </div>
           )}
 
           {product.description && (

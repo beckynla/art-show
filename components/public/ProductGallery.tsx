@@ -30,9 +30,6 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
     else if (dx < -50) showNext()
   }
 
-  const arrowClass =
-    'absolute top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-900 p-2 rounded-full shadow transition-colors'
-
   if (images.length === 0) {
     return (
       <div className="aspect-square bg-gray-100 flex items-center justify-center">
@@ -66,38 +63,6 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
             priority
             sizes="(max-width: 1024px) 100vw, 50vw"
           />
-          {/* Previous / next arrows — clicks don't open the lightbox */}
-          {hasMultiple && (
-            <>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  showPrev()
-                }}
-                className={`${arrowClass} left-3`}
-                aria-label="Previous image"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  showNext()
-                }}
-                className={`${arrowClass} right-3`}
-                aria-label="Next image"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </>
-          )}
-
           {/* Zoom hint icon */}
           <div className="absolute bottom-4 right-4 bg-black/50 text-white p-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
