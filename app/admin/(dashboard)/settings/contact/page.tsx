@@ -2,7 +2,10 @@
 
 import { Input, Textarea } from '@/components/ui'
 import { SettingsForm } from '@/components/admin/SettingsForm'
+import { SettingsImageInput } from '@/components/admin/SettingsImageInput'
 import { TestEmailButton } from '@/components/admin/TestEmailButton'
+
+const CONTACT_PHOTO_KEYS = ['contact_photo_1', 'contact_photo_2', 'contact_photo_3']
 
 export default function ContactSettingsPage() {
   return (
@@ -30,6 +33,19 @@ export default function ContactSettingsPage() {
             rows={6}
             helpText="Shown at the top of the contact page. Good place to note your location and invite studio visits."
           />
+
+          <h3 className="text-lg font-medium text-gray-900 border-b pb-2 pt-4">Contact Page Photos</h3>
+          <p className="text-sm text-gray-500 -mt-3">
+            Optional. Add up to three photos, such as your studio or you at work. They appear below the intro text.
+          </p>
+          {CONTACT_PHOTO_KEYS.map((key, i) => (
+            <SettingsImageInput
+              key={key}
+              label={`Contact Photo ${i + 1}`}
+              value={settings[key] || ''}
+              onChange={(url) => updateSetting(key, url)}
+            />
+          ))}
 
           <h3 className="text-lg font-medium text-gray-900 border-b pb-2 pt-4">Contact Information</h3>
 

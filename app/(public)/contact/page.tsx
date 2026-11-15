@@ -1,7 +1,19 @@
+import Image from 'next/image'
 import { getSettings } from '@/lib/settings'
+import { ImageLightbox } from '@/components/public/ImageLightbox'
+
+// Fewer photos get wider columns so a single photo isn't left small
+const PHOTO_GRID: Record<number, string> = {
+  1: 'grid-cols-1 max-w-2xl',
+  2: 'grid-cols-1 sm:grid-cols-2',
+  3: 'grid-cols-1 sm:grid-cols-3',
+}
 
 export default async function ContactPage() {
   const contact = await getSettings('contact')
+  const photos = [contact.contact_photo_1, contact.contact_photo_2, contact.contact_photo_3].filter(
+    (url): url is string => Boolean(url)
+  )
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -22,6 +34,24 @@ export default async function ContactPage() {
             .map((p, i) => (
               <p key={i}>{p}</p>
             ))}
+        </div>
+      )}
+
+      {/* Optional photos, set in Settings → Contact */}
+      {photos.length > 0 && (
+        <div className={`grid gap-4 items-start mb-10 ${PHOTO_GRID[photos.length]}`}>
+          {photos.map((url, i) => (
+            <ImageLightbox key={url} src={url} alt={`Contact photo ${i + 1}`}>
+              <Image
+                src={url}
+                alt={`Contact photo ${i + 1}`}
+                width={0}
+                height={0}
+                className="block w-full h-auto rounded-lg"
+                sizes="(max-width: 640px) 100vw, 50vw"
+              />
+            </ImageLightbox>
+          ))}
         </div>
       )}
 

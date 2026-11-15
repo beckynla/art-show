@@ -127,7 +127,10 @@ export default async function ProductPage({
 
           {/* Availability — small print between title and size; unavailable pieces say so on the button */}
           {product.status === 'available' && (
-            <p className="mt-2 text-sm uppercase tracking-wider text-gray-500">Available</p>
+            <p className="mt-2 flex items-center gap-2 text-sm uppercase tracking-wider text-gray-500">
+              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true" />
+              Available
+            </p>
           )}
 
           {/* Size — prominent */}
