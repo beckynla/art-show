@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { StickyActions } from './StickyActions'
 import { Button } from '@/components/ui'
 
 interface SettingsFormProps {
@@ -100,11 +101,11 @@ export function SettingsForm({ group, title, description, children }: SettingsFo
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
         {children({ settings, updateSetting, hasChanges })}
       </div>
 
-      <div className="mt-6 flex items-center justify-between">
+      <StickyActions className="mt-6">
         <Button
           type="button"
           variant="outline"
@@ -115,7 +116,7 @@ export function SettingsForm({ group, title, description, children }: SettingsFo
         <Button type="submit" loading={isSaving} disabled={!hasChanges}>
           Save Changes
         </Button>
-      </div>
+      </StickyActions>
     </form>
   )
 }

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, Input, Textarea, Select } from '@/components/ui'
 import { ImageInput } from './ImageInput'
+import { StickyActions } from './StickyActions'
 import type { ProductImage } from '@/types'
 
 interface ProductFormProps {
@@ -177,7 +178,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
       )}
 
       {/* Basic Info */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
@@ -210,13 +211,13 @@ export function ProductForm({ product, categories }: ProductFormProps) {
       </div>
 
       {/* Images */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Images</h2>
         <ImageInput images={formData.images} onChange={handleImagesChange} />
       </div>
 
       {/* Pricing */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Pricing</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
@@ -258,7 +259,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
       </div>
 
       {/* Dimensions */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Dimensions</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <Input
@@ -310,7 +311,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
       </div>
 
       {/* Organization */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Organization</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Select
@@ -359,7 +360,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
       </div>
 
       {/* Actions */}
-      <div className="flex items-center justify-between">
+      <StickyActions>
         <div>
           {isEditing && (
             <Button
@@ -368,11 +369,11 @@ export function ProductForm({ product, categories }: ProductFormProps) {
               onClick={handleDelete}
               disabled={isSubmitting}
             >
-              Delete Product
+              Delete<span className="hidden sm:inline">&nbsp;Product</span>
             </Button>
           )}
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <Button
             type="button"
             variant="outline"
@@ -385,7 +386,7 @@ export function ProductForm({ product, categories }: ProductFormProps) {
             {isEditing ? 'Save Changes' : 'Create Product'}
           </Button>
         </div>
-      </div>
+      </StickyActions>
     </form>
   )
 }

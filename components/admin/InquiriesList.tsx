@@ -76,7 +76,7 @@ export function InquiriesList({ initialInquiries }: { initialInquiries: Inquiry[
     <div className="divide-y divide-gray-200">
       {inquiries.map((q) => (
         <div key={q.id} className={q.status === 'new' ? 'bg-primary-50/40' : ''}>
-          <div className="flex items-center gap-4 px-6 py-4">
+          <div className="flex items-center gap-4 px-4 sm:px-6 py-4">
             <button onClick={() => toggle(q)} className="flex-1 text-left">
               <div className="flex items-center gap-2">
                 <span className="font-medium text-gray-900">{q.name}</span>
@@ -96,7 +96,7 @@ export function InquiriesList({ initialInquiries }: { initialInquiries: Inquiry[
           </div>
 
           {expanded === q.id && (
-            <div className="px-6 pb-5">
+            <div className="px-4 sm:px-6 pb-5">
               <div className="rounded-lg bg-gray-50 p-4 text-gray-700 whitespace-pre-wrap">
                 {q.message}
               </div>

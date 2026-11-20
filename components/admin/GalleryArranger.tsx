@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui'
+import { StickyActions } from './StickyActions'
 import type { GalleryOrder } from '@/lib/gallery'
 
 export interface ArrangerProduct {
@@ -251,14 +252,14 @@ export function GalleryArranger({ products, initialOrder, initialAvailableFirst 
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
+      <StickyActions>
         <Button type="button" variant="outline" onClick={() => router.push('/admin/products')}>
           Back to Products
         </Button>
         <Button type="button" onClick={save} loading={isSaving} disabled={!hasChanges}>
           Save Changes
         </Button>
-      </div>
+      </StickyActions>
     </div>
   )
 }

@@ -117,7 +117,7 @@ export default function CategoriesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
           <p className="text-gray-500 mt-1">Organize your artwork by category</p>
@@ -144,22 +144,23 @@ export default function CategoriesPage() {
               <Button onClick={() => openModal()}>Add Your First Category</Button>
             </div>
           ) : (
+            <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Slug</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                  <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Slug</th>
+                  <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                  <th className="px-4 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {categories.map((category) => (
                   <tr key={category.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 font-medium text-gray-900">{category.name}</td>
-                    <td className="px-6 py-4 text-gray-500">{category.slug}</td>
-                    <td className="px-6 py-4 text-gray-500">{category.description || '-'}</td>
-                    <td className="px-6 py-4 text-right space-x-2">
+                    <td className="px-4 sm:px-6 py-4 font-medium text-gray-900">{category.name}</td>
+                    <td className="hidden sm:table-cell px-6 py-4 text-gray-500">{category.slug}</td>
+                    <td className="hidden md:table-cell px-6 py-4 text-gray-500">{category.description || '-'}</td>
+                    <td className="px-4 sm:px-6 py-4 text-right space-x-3 whitespace-nowrap">
                       <button
                         onClick={() => openModal(category)}
                         className="text-primary-600 hover:text-primary-900"
@@ -177,6 +178,7 @@ export default function CategoriesPage() {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </CardContent>
       </Card>

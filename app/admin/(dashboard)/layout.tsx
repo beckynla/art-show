@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 import { getSession, getCurrentUser } from '@/lib/auth'
-import { Sidebar } from '@/components/admin/Sidebar'
-import { Header } from '@/components/admin/Header'
+import { AdminShell } from '@/components/admin/AdminShell'
 import { ToastProvider } from '@/components/ui'
 import { ensureDailySnapshot } from '@/lib/backup'
 
@@ -24,13 +23,7 @@ export default async function AdminLayout({
 
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-gray-50">
-        <Sidebar />
-        <div className="pl-64">
-          <Header user={user ?? undefined} />
-          <main className="p-6">{children}</main>
-        </div>
-      </div>
+      <AdminShell user={user ?? undefined}>{children}</AdminShell>
     </ToastProvider>
   )
 }

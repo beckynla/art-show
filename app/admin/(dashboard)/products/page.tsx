@@ -16,13 +16,13 @@ export default async function ProductsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Products</h1>
           <p className="text-gray-500 mt-1">Manage your artwork inventory</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Link href="/admin/products/arrange">
+        <div className="grid grid-cols-2 gap-3 sm:flex sm:items-center">
+          <Link href="/admin/products/arrange" className="[&>button]:w-full">
             <Button variant="outline">
               <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -30,7 +30,7 @@ export default async function ProductsPage() {
               Arrange Gallery
             </Button>
           </Link>
-          <Link href="/admin/products/new">
+          <Link href="/admin/products/new" className="[&>button]:w-full">
             <Button>
               <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -55,7 +55,43 @@ export default async function ProductsPage() {
               </Link>
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <>
+            {/* Phones: one tappable row per piece */}
+            <ul className="divide-y divide-gray-200 md:hidden">
+              {products.map((product) => (
+                <li key={product.id}>
+                  <Link
+                    href={`/admin/products/${product.id}`}
+                    className="flex items-center gap-3 px-4 py-3 active:bg-gray-50"
+                  >
+                    <Image
+                      src={getPrimaryImage(parseImages(product.images))}
+                      alt={product.title}
+                      width={56}
+                      height={56}
+                      className="h-14 w-14 flex-shrink-0 rounded-lg object-cover"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm font-medium text-gray-900">
+                        {product.title || <span className="text-gray-400 italic">Untitled</span>}
+                      </div>
+                      <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <Badge variant={getStatusVariant(product.status)}>{product.status}</Badge>
+                        {product.featured && <Badge variant="info">Featured</Badge>}
+                        {product.price > 0 && (
+                          <span className="text-xs text-gray-500">{formatCurrency(product.price)}</span>
+                        )}
+                      </div>
+                    </div>
+                    <svg className="h-5 w-5 flex-shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            <div className="hidden overflow-x-auto md:block">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
@@ -137,6 +173,7 @@ export default async function ProductsPage() {
                 </tbody>
               </table>
             </div>
+            </>
           )}
         </CardContent>
       </Card>

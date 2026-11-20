@@ -121,7 +121,7 @@ export function FeaturedItemsEditor({ items, onChange, maxItems = 8 }: FeaturedI
           key={item.id}
           className="border border-gray-200 rounded-lg p-4 bg-white"
         >
-          <div className="flex items-start gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-4">
             {/* Image Upload */}
             <div className="flex-shrink-0">
               {item.image ? (
@@ -184,7 +184,7 @@ export function FeaturedItemsEditor({ items, onChange, maxItems = 8 }: FeaturedI
             </div>
 
             {/* Fields */}
-            <div className="flex-1 space-y-3">
+            <div className="w-full min-w-0 flex-1 space-y-3">
               <Input
                 label="Title"
                 value={item.title}
@@ -207,7 +207,7 @@ export function FeaturedItemsEditor({ items, onChange, maxItems = 8 }: FeaturedI
             </div>
 
             {/* Actions */}
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-row sm:flex-col gap-1 self-end sm:self-auto">
               <button
                 type="button"
                 onClick={() => moveItem(index, 'up')}
