@@ -6,6 +6,9 @@ import { Button, Input, Textarea, Select } from '@/components/ui'
 import { ImageInput } from './ImageInput'
 import { StickyActions } from './StickyActions'
 import type { ProductImage } from '@/types'
+import { slugify } from '@/lib/utils'
+
+const NEW_COLLECTION = '__new__'
 
 interface ProductFormProps {
   product?: {
@@ -44,7 +47,7 @@ const dimensionUnitOptions = [
   { value: 'cm', label: 'Centimeters' },
 ]
 
-export function ProductForm({ product, categories }: ProductFormProps) {
+export function ProductForm({ product, categories: initialCategories }: ProductFormProps) {
   const router = useRouter()
   const isEditing = !!product
 
@@ -69,6 +72,47 @@ export function ProductForm({ product, categories }: ProductFormProps) {
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [categories, setCategories] = useState(initialCategories)
+  const [addingCollection, setAddingCollection] = useState(false)
+  const [newCollection, setNewCollection] = useState('')
+  const [collectionError, setCollectionError] = useState('')
+  const [isSavingCollection, setIsSavingCollection] = useState(false)
+
+  // Save a new collection so it's offered for every piece from now on, then pick it for this one
+  const handleAddCollection = async () => {
+    const name = newCollection.trim()
+    const slug = slugify(name)
+    if (!name || !slug) return
+
+    const existing = categories.find((c) => c.value === slug)
+    if (existing) {
+      setFormData((prev) => ({ ...prev, category: existing.value }))
+      setAddingCollection(false)
+      setNewCollection('')
+      return
+    }
+
+    setIsSavingCollection(true)
+    setCollectionError('')
+    try {
+      const res = await fetch('/api/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, slug }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || 'Failed to add collection')
+
+      setCategories((prev) => [...prev, { value: data.category.slug, label: data.category.name }])
+      setFormData((prev) => ({ ...prev, category: data.category.slug }))
+      setAddingCollection(false)
+      setNewCollection('')
+    } catch (err) {
+      setCollectionError(err instanceof Error ? err.message : 'Failed to add collection')
+    } finally {
+      setIsSavingCollection(false)
+    }
+  }
   const [error, setError] = useState('')
 
   const handleChange = (
@@ -314,13 +358,75 @@ export function ProductForm({ product, categories }: ProductFormProps) {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Organization</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Select
-            label="Category"
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            options={[{ value: '', label: 'Select category' }, ...categories]}
-          />
+          {addingCollection ? (
+            <div>
+              <label htmlFor="new-collection" className="block text-sm font-medium text-gray-700 mb-1">
+                New collection
+              </label>
+              <div className="flex gap-2">
+                <input
+                  id="new-collection"
+                  type="text"
+                  autoFocus
+                  value={newCollection}
+                  onChange={(e) => setNewCollection(e.target.value)}
+                  onKeyDown={(e) => {
+                    // Enter adds the collection instead of submitting the whole form
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleAddCollection()
+                    } else if (e.key === 'Escape') {
+                      setAddingCollection(false)
+                    }
+                  }}
+                  placeholder="e.g., Birds"
+                  className="block w-full min-w-0 px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                />
+                <Button
+                  type="button"
+                  onClick={handleAddCollection}
+                  loading={isSavingCollection}
+                  disabled={!slugify(newCollection)}
+                >
+                  Add
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setAddingCollection(false)
+                    setNewCollection('')
+                    setCollectionError('')
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
+              {collectionError ? (
+                <p className="mt-1 text-sm text-red-600">{collectionError}</p>
+              ) : (
+                <p className="mt-1 text-sm text-gray-500">Saved for future pieces too</p>
+              )}
+            </div>
+          ) : (
+            <Select
+              label="Collection"
+              name="category"
+              value={formData.category}
+              onChange={(e) => {
+                if (e.target.value === NEW_COLLECTION) {
+                  setAddingCollection(true)
+                  return
+                }
+                handleChange(e)
+              }}
+              options={[
+                { value: '', label: categories.length ? 'No collection' : 'No collections yet' },
+                ...categories,
+                { value: NEW_COLLECTION, label: '+ Add new collection…' },
+              ]}
+            />
+          )}
           <Input
             label="SKU"
             name="sku"
