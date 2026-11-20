@@ -10,7 +10,7 @@ const navigation = [
   { name: 'Inquiries', href: '/admin/inquiries', icon: InquiriesIcon },
   { name: 'Orders', href: '/admin/orders', icon: OrdersIcon },
   { name: 'Analytics', href: '/admin/analytics', icon: AnalyticsIcon },
-  { name: 'Categories', href: '/admin/categories', icon: CategoriesIcon },
+  { name: 'Collections', href: '/admin/categories', icon: CategoriesIcon },
   { name: 'Settings', href: '/admin/settings', icon: SettingsIcon },
 ]
 

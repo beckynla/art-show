@@ -91,20 +91,20 @@ export default function CategoriesPage() {
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || 'Failed to save category')
+        throw new Error(data.error || 'Failed to save collection')
       }
 
       await fetchCategories()
       closeModal()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save category')
+      setError(err instanceof Error ? err.message : 'Failed to save collection')
     } finally {
       setIsSaving(false)
     }
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this category?')) return
+    if (!confirm('Are you sure you want to delete this collection?')) return
 
     try {
       const response = await fetch(`/api/categories/${id}`, { method: 'DELETE' })
@@ -119,14 +119,14 @@ export default function CategoriesPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
-          <p className="text-gray-500 mt-1">Organize your artwork by category</p>
+          <h1 className="text-2xl font-bold text-gray-900">Collections</h1>
+          <p className="text-gray-500 mt-1">Group your artwork into collections</p>
         </div>
         <Button onClick={() => openModal()}>
           <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Add Category
+          Add Collection
         </Button>
       </div>
 
@@ -139,9 +139,9 @@ export default function CategoriesPage() {
               <svg className="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
               </svg>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No categories yet</h3>
-              <p className="text-gray-500 mb-4">Create categories to organize your artwork</p>
-              <Button onClick={() => openModal()}>Add Your First Category</Button>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No collections yet</h3>
+              <p className="text-gray-500 mb-4">Create collections to organize your artwork</p>
+              <Button onClick={() => openModal()}>Add Your First Collection</Button>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -186,7 +186,7 @@ export default function CategoriesPage() {
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={editingCategory ? 'Edit Category' : 'Add Category'}
+        title={editingCategory ? 'Edit Collection' : 'Add Collection'}
       >
         <form onSubmit={handleSubmit}>
           {error && (
@@ -201,7 +201,7 @@ export default function CategoriesPage() {
               value={formData.name}
               onChange={handleChange}
               required
-              placeholder="e.g., Paintings"
+              placeholder="e.g., Birds"
             />
             <Input
               label="Slug"
@@ -209,7 +209,7 @@ export default function CategoriesPage() {
               value={formData.slug}
               onChange={handleChange}
               required
-              placeholder="e.g., paintings"
+              placeholder="e.g., birds"
             />
             <Input
               label="Description"
@@ -224,7 +224,7 @@ export default function CategoriesPage() {
               Cancel
             </Button>
             <Button type="submit" loading={isSaving}>
-              {editingCategory ? 'Save Changes' : 'Create Category'}
+              {editingCategory ? 'Save Changes' : 'Create Collection'}
             </Button>
           </ModalFooter>
         </form>

@@ -12,7 +12,7 @@ export async function GET() {
   } catch (error) {
     console.error('Error fetching categories:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch categories' },
+      { error: 'Failed to fetch collections' },
       { status: 500 }
     )
   }
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 
     if (existing) {
       return NextResponse.json(
-        { error: 'A category with this slug already exists' },
+        { error: 'A collection with this slug already exists' },
         { status: 400 }
       )
     }
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error creating category:', error)
     return NextResponse.json(
-      { error: 'Failed to create category' },
+      { error: 'Failed to create collection' },
       { status: 500 }
     )
   }

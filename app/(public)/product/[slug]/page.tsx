@@ -67,7 +67,7 @@ async function getNeighborProducts(currentId: string) {
 }
 
 const pieceArrowClass =
-  'fixed top-1/2 -translate-y-1/2 z-40 bg-white/80 hover:bg-white text-gray-900 p-2 sm:p-3 rounded-full shadow-md transition-colors'
+  'hidden lg:block fixed top-1/2 -translate-y-1/2 z-40 bg-white/80 hover:bg-white text-gray-900 p-2 sm:p-3 rounded-full shadow-md transition-colors'
 
 export default async function ProductPage({
   params,
@@ -91,7 +91,8 @@ export default async function ProductPage({
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Previous / next piece — pinned to the screen edges so they're always in reach */}
+      {/* Previous / next piece — pinned to the screen edges on large screens.
+          Phones and tablets get labeled links below instead, so these aren't mistaken for photo arrows. */}
       {prevProduct && (
         <Link
           href={`/product/${prevProduct.slug}`}
@@ -177,6 +178,28 @@ export default async function ProductPage({
               Return to Gallery
             </Link>
           </div>
+
+          {/* Previous / next piece on phones and tablets, labeled so they read as page navigation */}
+          {(prevProduct || nextProduct) && (
+            <nav className="mt-8 flex justify-between gap-4 border-t border-gray-200 pt-4 lg:hidden" aria-label="More artwork">
+              {prevProduct ? (
+                <Link href={`/product/${prevProduct.slug}`} className="min-w-0 py-1">
+                  <span className="block text-xs uppercase tracking-wider text-gray-500">&larr; Previous piece</span>
+                  {prevProduct.title && (
+                    <span className="block truncate text-sm text-gray-900">{prevProduct.title}</span>
+                  )}
+                </Link>
+              ) : <span />}
+              {nextProduct && (
+                <Link href={`/product/${nextProduct.slug}`} className="min-w-0 py-1 text-right">
+                  <span className="block text-xs uppercase tracking-wider text-gray-500">Next piece &rarr;</span>
+                  {nextProduct.title && (
+                    <span className="block truncate text-sm text-gray-900">{nextProduct.title}</span>
+                  )}
+                </Link>
+              )}
+            </nav>
+          )}
 
           {/* SKU */}
           {product.sku && (

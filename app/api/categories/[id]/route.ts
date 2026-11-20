@@ -14,7 +14,7 @@ export async function GET(
 
     if (!category) {
       return NextResponse.json(
-        { error: 'Category not found' },
+        { error: 'Collection not found' },
         { status: 404 }
       )
     }
@@ -23,7 +23,7 @@ export async function GET(
   } catch (error) {
     console.error('Error fetching category:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch category' },
+      { error: 'Failed to fetch collection' },
       { status: 500 }
     )
   }
@@ -50,7 +50,7 @@ export async function PUT(
 
     if (!existing) {
       return NextResponse.json(
-        { error: 'Category not found' },
+        { error: 'Collection not found' },
         { status: 404 }
       )
     }
@@ -63,7 +63,7 @@ export async function PUT(
 
       if (slugExists) {
         return NextResponse.json(
-          { error: 'A category with this slug already exists' },
+          { error: 'A collection with this slug already exists' },
           { status: 400 }
         )
       }
@@ -82,7 +82,7 @@ export async function PUT(
   } catch (error) {
     console.error('Error updating category:', error)
     return NextResponse.json(
-      { error: 'Failed to update category' },
+      { error: 'Failed to update collection' },
       { status: 500 }
     )
   }
@@ -108,7 +108,7 @@ export async function DELETE(
   } catch (error) {
     console.error('Error deleting category:', error)
     return NextResponse.json(
-      { error: 'Failed to delete category' },
+      { error: 'Failed to delete collection' },
       { status: 500 }
     )
   }
